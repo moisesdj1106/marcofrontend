@@ -46,7 +46,7 @@ const Invoices = () => {
   const formatCOP = (val) => {
     return new Intl.NumberFormat('es-CO', {
     style: 'currency',
-    currency: 'Bs',
+    currency: 'VES',
     minimumFractionDigits: 2,
     maximumFractionDigits: 2
     }).format(val);

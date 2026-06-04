@@ -1,5 +1,5 @@
 [build]
-  command = "npm run build"
+  command = "npm ci && npm run build"
   publish = "dist"
 
 [[redirects]]
@@ -9,8 +9,22 @@
 
 [build.environment]
   NODE_VERSION = "18.17.0"
+  # Si necesitas variables de entorno para el build:
+  # VITE_API_URL = "https://tu-backend.onrender.com"
 
 [dev]
   command = "npm run dev"
   port = 3000
   publish = "dist"
+
+# Configuración de funciones (si necesitas serverless functions)
+# [functions]
+#   directory = "functions"
+
+# Configuración de headers de seguridad
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"

@@ -42,7 +42,7 @@ const OrdersHistory = () => {
   const formatCOP = (val) => {
     return new Intl.NumberFormat('es-CO', {
     style: 'currency',
-    currency: 'VES',
+    currency: 'Bs',
     minimumFractionDigits: 2,
     maximumFractionDigits: 2
     }).format(val);

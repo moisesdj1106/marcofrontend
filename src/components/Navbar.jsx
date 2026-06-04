@@ -29,6 +29,25 @@ const Navbar = () => {
   const navigate = useNavigate();
   const [visible, setVisible] = useState(false);
   const [userDropdownOpen, setUserDropdownOpen] = useState(false);
+  const [theme, setTheme] = useState(() => {
+    try {
+      return localStorage.getItem('site_theme') || 'dark';
+    } catch (e) { return 'dark'; }
+  });
+
+  // Aplicar tema en el document element
+  React.useEffect(() => {
+    try {
+      if (theme === 'dark') {
+        document.documentElement.classList.add('dark-theme');
+      } else {
+        document.documentElement.classList.remove('dark-theme');
+      }
+      localStorage.setItem('site_theme', theme);
+    } catch (e) { /* ignore */ }
+  }, [theme]);
+
+  const toggleTheme = () => setTheme(prev => prev === 'dark' ? 'light' : 'dark');
 
   const handleLogout = () => {
     logout();
@@ -130,6 +149,9 @@ const Navbar = () => {
                   <CDropdownItem as={Link} to="/admin/inventario" className="dropdown-item-modern">
                     <CIcon icon={cilList} className="me-2" /> Inventario
                   </CDropdownItem>
+                  <CDropdownItem as={Link} to="/admin/facturas" className="dropdown-item-modern">
+                    <CIcon icon={cilList} className="me-2" /> Facturas
+                  </CDropdownItem>
                   <CDropdownItem as={Link} to="/admin/auditoria" className="dropdown-item-modern">
                     <CIcon icon={cilShieldAlt} className="me-2" /> Auditoría
                   </CDropdownItem>
@@ -140,6 +162,10 @@ const Navbar = () => {
 
           {/* Acciones del usuario */}
           <div className="d-flex align-items-center gap-3">
+            {/* Theme toggle */}
+            <CButton color="link" className="theme-toggle text-white" onClick={toggleTheme} title="Cambiar tema">
+              {theme === 'dark' ? '🌙' : '☀️'}
+            </CButton>
             {/* Carrito */}
             {!isAdmin && (
               <Link to="/carrito" className="cart-icon position-relative">

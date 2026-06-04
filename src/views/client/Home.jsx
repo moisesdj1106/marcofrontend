@@ -301,7 +301,7 @@ const Home = () => {
     {
       icon: cilTruck,
       title: "Entrega Rápida",
-      description: "Despacho en 24h dentro de Medellín y área metropolitana",
+      description: "Despacho en 24h dentro de San Cristóbal y área metropolitana",
       color: "#059669"
     },
     {

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
+import { getApiUrl } from '../../utils/api';
 import { 
   CContainer, 
   CTable, 
@@ -29,7 +30,7 @@ const AuditLogs = () => {
   const fetchAuditLogs = async () => {
     setLoading(true);
     try {
-      const response = await fetch('http://localhost:4000/api/audit', {
+      const response = await fetch(getApiUrl('/api/audit'), {
         headers: getAuthHeaders()
       });
       const data = await response.json();
@@ -92,7 +93,7 @@ const AuditLogs = () => {
     <CContainer className="py-4">
       <div className="d-flex justify-content-between align-items-center mb-4">
         <div>
-          <h2 className="text-black fw-bold m-0">Auditoría del Sistema</h2>
+          <h2 className="fw-bold m-0" style={{ color: 'var(--text-primary)' }}>Auditoría del Sistema</h2>
           <p className="text-muted mb-0">Listado de seguridad: quién, cuándo y qué acción realizó en la tienda</p>
         </div>
         <button onClick={fetchAuditLogs} className="btn-red py-2 px-3">Refrescar Logs 🔄</button>

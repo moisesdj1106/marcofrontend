@@ -18,6 +18,103 @@
   color-scheme: light;
 }
 
+/* Tema Oscuro: sobreescribe variables raíz cuando se aplica la clase .dark-theme en <html> o <body> */
+.dark-theme {
+  --bg-primary: #0b1220;
+  --bg-secondary: #0f1724;
+  --bg-tertiary: #111827;
+  --accent-blue: #6aa6ff;
+  --accent-blue-hover: #4d8fe6;
+  --accent-blue-light: #0b2340;
+  --accent-orange: #ff8a3d;
+  --accent-orange-hover: #ff7300;
+  --accent-orange-light: #2b0f00;
+  --text-primary: #f8fafc;
+  --text-secondary: #cbd5e1;
+  --border-color: rgba(255,255,255,0.06);
+  color-scheme: dark;
+}
+
+/* Reglas específicas para mejorar contraste en modo oscuro */
+.dark-theme body {
+  background-color: var(--bg-primary) !important;
+  color: var(--text-primary) !important;
+}
+
+.dark-theme .glass-panel {
+  background: var(--bg-secondary) !important;
+  border: 1px solid rgba(255,255,255,0.04) !important;
+  box-shadow: 0 8px 20px rgba(2,6,23,0.6);
+}
+
+.dark-theme .product-card {
+  background: var(--bg-secondary) !important;
+  border: 1px solid rgba(255,255,255,0.04) !important;
+  box-shadow: 0 8px 24px rgba(2,6,23,0.6);
+}
+
+.dark-theme .product-card::before {
+  background: linear-gradient(90deg, var(--accent-blue), var(--accent-orange));
+}
+
+.dark-theme .custom-navbar {
+  background-color: var(--bg-secondary) !important;
+  border-bottom: 1px solid rgba(255,255,255,0.04) !important;
+  box-shadow: 0 6px 18px rgba(2,6,23,0.45);
+}
+
+.dark-theme .custom-navbar .nav-link {
+  color: var(--text-secondary) !important;
+}
+
+.dark-theme .form-control, .dark-theme .form-select, .dark-theme .StripeElement {
+  background-color: var(--bg-secondary) !important;
+  border: 1px solid rgba(255,255,255,0.04) !important;
+  color: var(--text-primary) !important;
+}
+
+.dark-theme .table {
+  color: var(--text-primary) !important;
+}
+
+.dark-theme .table th {
+  background-color: var(--bg-tertiary) !important;
+  color: var(--text-primary) !important;
+  border-bottom: 2px solid rgba(255,255,255,0.04) !important;
+}
+
+.dark-theme .table td {
+  color: var(--text-secondary) !important;
+  border-bottom: 1px solid rgba(255,255,255,0.02) !important;
+}
+
+.dark-theme .btn-outline-red {
+  background: transparent !important;
+  color: var(--accent-orange) !important;
+  border-color: rgba(255,255,255,0.06) !important;
+}
+
+.dark-theme .btn-red {
+  background: linear-gradient(135deg, var(--accent-orange) 0%, var(--accent-orange-hover) 100%);
+  color: #fff !important;
+}
+
+.dark-theme h1, .dark-theme h2, .dark-theme h3, .dark-theme h4, .dark-theme h5, .dark-theme h6, .dark-theme .brand-title {
+  color: var(--text-primary) !important;
+}
+
+.dark-theme a, .dark-theme .nav-link, .dark-theme .hover-blue {
+  color: var(--text-secondary) !important;
+}
+
+.dark-theme .gradient-text {
+  background: linear-gradient(135deg, var(--accent-blue) 0%, var(--accent-orange) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+}
+
 body {
   margin: 0;
   background-color: var(--bg-primary);
@@ -41,7 +138,9 @@ h1, h2, h3, h4, h5, h6, .brand-title {
 .gradient-text {
   background: linear-gradient(135deg, var(--accent-blue) 0%, var(--accent-orange) 100%);
   -webkit-background-clip: text;
+  background-clip: text;
   -webkit-text-fill-color: transparent;
+  color: transparent;
 }
 
 .titulo {

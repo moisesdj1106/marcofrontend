@@ -2,13 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useCart } from '../../context/CartContext';
 import { useAuth } from '../../context/AuthContext';
-import { loadStripe } from '@stripe/stripe-js';
-import { 
-  Elements, 
-  CardElement, 
-  useStripe, 
-  useElements 
-} from '@stripe/react-stripe-js';
 import { 
   CContainer, 
   CRow, 
@@ -21,13 +14,9 @@ import {
 } from '@coreui/react';
 import { CIcon } from '@coreui/icons-react';
 import { cilCreditCard, cilCheckCircle, cilXCircle } from '@coreui/icons';
+import { getApiUrl } from '../../utils/api';
 
-// Inicializar Stripe con la llave pública. Intentará leerla del .env o usará una llave de prueba genérica
-const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY || 'pk_test_51PTestKeyPlaceholder');
-
-const CheckoutForm = () => {
-  const stripe = useStripe();
-  const elements = useElements();
+const CheckoutForm = ({ setPreventEmptyRedirect }) => {
   const navigate = useNavigate();
   const { cartItems, getCartTotal, clearCart } = useCart();
   const { getAuthHeaders } = useAuth();
@@ -35,7 +24,12 @@ const CheckoutForm = () => {
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
-  const [orderInfo, setOrderInfo] = useState(null); // Guardará { clientSecret, orderId }
+  const [orderInfo, setOrderInfo] = useState(null); // Guardará { clientSecret, orderId, subtotal, taxAmount, totalAmount }
+
+  const cartSubtotal = getCartTotal();
+  const displayedSubtotal = orderInfo ? orderInfo.subtotal : cartSubtotal;
+  const displayedTax = orderInfo ? orderInfo.taxAmount : Number((cartSubtotal * 0.16).toFixed(2));
+  const displayedTotal = orderInfo ? orderInfo.totalAmount : Number((displayedSubtotal + displayedTax).toFixed(2));
 
   // Paso 1: Iniciar el proceso de compra llamando al Backend al cargar la pantalla
   useEffect(() => {
@@ -44,7 +38,7 @@ const CheckoutForm = () => {
     const startCheckout = async () => {
       setLoading(true);
       try {
-        const response = await fetch('http://localhost:4000/api/orders/checkout', {
+        const response = await fetch(getApiUrl('/api/orders/checkout'), {
           method: 'POST',
           headers: getAuthHeaders(),
           body: JSON.stringify({
@@ -76,75 +70,44 @@ const CheckoutForm = () => {
   const handleSubmit = async (event) => {
     event.preventDefault();
 
-    if (!stripe || !elements || !orderInfo) {
+    if (!orderInfo) {
       return;
     }
 
     setLoading(true);
     setErrorMessage('');
 
-    // Confirmar pago en Stripe con los datos de tarjeta ingresados de forma segura
-    const cardElement = elements.getElement(CardElement);
+    try {
+      const response = await fetch(getApiUrl('/api/orders/confirm'), {
+        method: 'POST',
+        headers: getAuthHeaders(),
+        body: JSON.stringify({
+          orderId: orderInfo.orderId,
+          paymentIntentId: orderInfo.paymentIntentId || 'fake_payment',
+          success: true
+        })
+      });
 
-    const { paymentIntent, error } = await stripe.confirmCardPayment(orderInfo.clientSecret, {
-      payment_method: {
-        card: cardElement,
-      },
-    });
+      const data = await response.json();
 
-    if (error) {
-      // ❌ EL PAGO DE STRIPE FALLÓ (Ejemplo: Fondos insuficientes, tarjeta declinada, expirada, etc.)
-      const reason = error.message;
-      setErrorMessage(`El pago fue rechazado: ${reason}`);
-      console.log('Pago rechazado por Stripe:', reason);
-
-      // Notificar al backend del rechazo de la orden
-      try {
-        await fetch('http://localhost:4000/api/orders/confirm', {
-          method: 'POST',
-          headers: getAuthHeaders(),
-          body: JSON.stringify({
-            orderId: orderInfo.orderId,
-            paymentIntentId: error.payment_intent ? error.payment_intent.id : orderInfo.clientSecret.split('_secret')[0],
-            success: false
-          })
-        });
-      } catch (confirmErr) {
-        console.error('Error enviando reporte de rechazo al backend:', confirmErr);
+      if (response.ok) {
+        setSuccessMessage('¡Pago simulado exitoso! Factura generada.');
+        // Evitar que el efecto padre redirija inmediatamente cuando el carrito se vacíe
+        if (setPreventEmptyRedirect) setPreventEmptyRedirect(true);
+        // Esperar unos segundos para mostrar mensaje exitoso antes de limpiar y redirigir
+        setTimeout(() => {
+          clearCart();
+          if (setPreventEmptyRedirect) setPreventEmptyRedirect(false);
+          navigate('/mis-compras');
+        }, 3000);
+      } else {
+        setErrorMessage(data.error || 'No se pudo simular el pago. Intenta de nuevo.');
       }
+    } catch (confirmErr) {
+      console.error('Error confirmando pago simulado:', confirmErr);
+      setErrorMessage('Error de red al registrar tu orden. Por favor intenta más tarde.');
+    } finally {
       setLoading(false);
-    } else {
-      // ✅ EL PAGO FUE EXITOSO EN STRIPE
-      if (paymentIntent.status === 'succeeded') {
-        // Notificar al backend del éxito para confirmar la orden, descontar stock y generar auditoría
-        try {
-          const response = await fetch('http://localhost:4000/api/orders/confirm', {
-            method: 'POST',
-            headers: getAuthHeaders(),
-            body: JSON.stringify({
-              orderId: orderInfo.orderId,
-              paymentIntentId: paymentIntent.id,
-              success: true
-            })
-          });
-
-          const data = await response.json();
-
-          if (response.ok) {
-            setSuccessMessage(`¡Transacción Aprobada! Referencia: ${paymentIntent.id}`);
-            clearCart();
-            setTimeout(() => {
-              navigate('/mis-compras');
-            }, 3000);
-          } else {
-            setErrorMessage(data.error || 'El pago fue cobrado en Stripe pero falló al confirmarse en inventario. Por favor contacte soporte.');
-          }
-        } catch (confirmErr) {
-          setErrorMessage('Error de red al registrar tu orden pagada. Por favor no intentes pagar nuevamente.');
-        } finally {
-          setLoading(false);
-        }
-      }
     }
   };
 
@@ -154,25 +117,6 @@ const CheckoutForm = () => {
       currency: 'COP',
       minimumFractionDigits: 0
     }).format(val);
-  };
-
-  // Opciones de estilo del campo de tarjeta
-  const cardElementOptions = {
-    style: {
-      base: {
-        color: '#f5f6f8',
-        fontFamily: 'Inter, sans-serif',
-        fontSmoothing: 'antialiased',
-        fontSize: '16px',
-        '::placeholder': {
-          color: '#a0aec0',
-        },
-      },
-      invalid: {
-        color: '#fa755a',
-        iconColor: '#fa755a',
-      },
-    },
   };
 
   return (
@@ -198,19 +142,32 @@ const CheckoutForm = () => {
       {!successMessage && (
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
-            <label className="text-secondary small d-block mb-2">Ingresa los Datos de tu Tarjeta de Crédito:</label>
-            <div className="StripeElement-container">
-              <CardElement options={cardElementOptions} />
+            <div className="text-secondary small d-block mb-2">Pago simulado</div>
+            <div className="p-3 bg-dark rounded-3 text-white small">
+              El pago se procesará en modo de prueba. No se usa Stripe en este flujo.
             </div>
-            <p className="text-muted small mt-2">
-              🔒 Tus datos se encriptan y procesan de forma 100% segura mediante Stripe.
-            </p>
           </div>
 
-          <div className="d-grid mt-4">
+          <div className="glass-panel p-4 p-3 mb-4 bg-dark-secondary rounded-3">
+        <h5 className="text-white fw-semibold mb-3">Resumen de Compra</h5>
+        <div className="d-flex justify-content-between align-items-center mb-2">
+          <span className="text-secondary">Subtotal</span>
+          <span className="text-white fw-semibold">{formatCOP(displayedSubtotal)}</span>
+        </div>
+        <div className="d-flex justify-content-between align-items-center mb-2">
+          <span className="text-secondary">IVA 16%</span>
+          <span className="text-white fw-semibold">{formatCOP(displayedTax)}</span>
+        </div>
+        <div className="border-top border-secondary pt-3 d-flex justify-content-between align-items-center">
+          <span className="text-white fw-bold">Total a pagar</span>
+          <span className="text-white fw-bold fs-5">{formatCOP(displayedTotal)}</span>
+        </div>
+      </div>
+
+      <div className="d-grid mt-4">
             <CButton 
               type="submit" 
-              disabled={loading || !stripe || !orderInfo} 
+              disabled={loading || !orderInfo} 
               className="btn-red py-3 fs-5 d-flex align-items-center justify-content-center gap-2"
             >
               {loading ? (
@@ -219,7 +176,7 @@ const CheckoutForm = () => {
                 </>
               ) : (
                 <>
-                  <CIcon icon={cilCreditCard} /> Pagar {orderInfo ? formatCOP(orderInfo.totalAmount) : formatCOP(getCartTotal())}
+                  <CIcon icon={cilCreditCard} /> Simular pago {formatCOP(displayedTotal)}
                 </>
               )}
             </CButton>
@@ -233,12 +190,13 @@ const CheckoutForm = () => {
 const Checkout = () => {
   const { cartItems, getCartTotal } = useCart();
   const navigate = useNavigate();
+  const [preventEmptyRedirect, setPreventEmptyRedirect] = useState(false);
 
   useEffect(() => {
-    if (cartItems.length === 0) {
+    if (cartItems.length === 0 && !preventEmptyRedirect) {
       navigate('/');
     }
-  }, [cartItems]);
+  }, [cartItems, preventEmptyRedirect]);
 
   const formatCOP = (val) => {
     return new Intl.NumberFormat('es-CO', {
@@ -250,16 +208,14 @@ const Checkout = () => {
 
   return (
     <CContainer className="py-4">
-      <h2 className="text-white fw-bold mb-4">Pasarela de Pagos Stripe</h2>
+      <h2 className="fw-bold mb-4" style={{ color: 'var(--text-primary)' }}>Pago simulado - prueba de factura</h2>
 
       <CRow className="g-4">
         {/* Formulario de Pago */}
         <CCol lg={7}>
           <div className="glass-panel p-4 p-md-5 text-white">
             <h4 className="fw-bold mb-4 text-uppercase tracking-wide">Completar Pago</h4>
-            <Elements stripe={stripePromise}>
-              <CheckoutForm />
-            </Elements>
+            <CheckoutForm setPreventEmptyRedirect={setPreventEmptyRedirect} />
           </div>
         </CCol>
 

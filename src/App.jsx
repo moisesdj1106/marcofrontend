@@ -26,6 +26,7 @@ import Register from './views/Register';
 import Dashboard from './views/admin/Dashboard';
 import Inventory from './views/admin/Inventory';
 import AuditLogs from './views/admin/AuditLogs';
+import Invoices from './views/admin/Invoices';
 
 function App() {
   return (
@@ -85,6 +86,14 @@ function App() {
                   element={
                     <ProtectedRoute adminOnly>
                       <AuditLogs />
+                    </ProtectedRoute>
+                  } 
+                />
+                <Route 
+                  path="/admin/facturas" 
+                  element={
+                    <ProtectedRoute adminOnly>
+                      <Invoices />
                     </ProtectedRoute>
                   } 
                 />

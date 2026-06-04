@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
+import { getApiUrl } from '../../utils/api';
 import { 
   CContainer, 
   CRow, 
@@ -62,12 +63,12 @@ const Inventory = () => {
     setLoading(true);
     try {
       // Cargar productos
-      const prodRes = await fetch('http://localhost:4000/api/products');
+      const prodRes = await fetch(getApiUrl('/api/products'));
       const prodData = await prodRes.json();
       if (prodRes.ok) setProducts(prodData);
 
       // Cargar categorías
-      const catRes = await fetch('http://localhost:4000/api/products/categories');
+      const catRes = await fetch(getApiUrl('/api/products/categories'));
       const catData = await catRes.json();
       if (catRes.ok) setCategories(catData);
     } catch (err) {
@@ -114,8 +115,8 @@ const Inventory = () => {
     };
 
     const url = editingProduct 
-      ? `http://localhost:4000/api/products/${editingProduct.id}` 
-      : 'http://localhost:4000/api/products';
+      ? getApiUrl(`/api/products/${editingProduct.id}`) 
+      : getApiUrl('/api/products');
     const method = editingProduct ? 'PUT' : 'POST';
 
     try {
@@ -141,7 +142,7 @@ const Inventory = () => {
   const handleDeleteProduct = async (id) => {
     if (!window.confirm('¿Estás seguro de que deseas eliminar este repuesto?')) return;
     try {
-      const res = await fetch(`http://localhost:4000/api/products/${id}`, {
+      const res = await fetch(getApiUrl(`/api/products/${id}`), {
         method: 'DELETE',
         headers: getAuthHeaders()
       });
@@ -163,7 +164,7 @@ const Inventory = () => {
     if (!catName) return;
 
     try {
-      const res = await fetch('http://localhost:4000/api/products/categories', {
+      const res = await fetch(getApiUrl('/api/products/categories'), {
         method: 'POST',
         headers: getAuthHeaders(),
         body: JSON.stringify({ name: catName, description: catDesc })
@@ -191,7 +192,7 @@ const Inventory = () => {
     if (!doubleCheck) return;
 
     try {
-      const res = await fetch(`http://localhost:4000/api/products/categories/${id}`, {
+      const res = await fetch(getApiUrl(`/api/products/categories/${id}`), {
         method: 'DELETE',
         headers: getAuthHeaders()
       });
@@ -289,7 +290,7 @@ const Inventory = () => {
                   <CTableDataCell>
                     <CBadge color="dark" style={{ border: '1px solid rgba(255,255,255,0.1)' }}>{prod.category_name}</CBadge>
                   </CTableDataCell>
-                  <CTableDataCell className="text-end text-black fw-semibold">{formatCOP(prod.price)}</CTableDataCell>
+                  <CTableDataCell className="text-end fw-semibold" style={{ color: 'var(--text-primary)' }}>{formatCOP(prod.price)}</CTableDataCell>
                   <CTableDataCell className="text-center">
                     {prod.stock > 5 ? (
                       <CBadge color="success">{prod.stock} u.</CBadge>
@@ -336,9 +337,9 @@ const Inventory = () => {
             <CTableBody>
               {categories.map((cat) => (
                 <CTableRow key={cat.id} className="border-bottom border-secondary">
-                  <CTableDataCell className="text-black">{cat.id}</CTableDataCell>
-                  <CTableDataCell className="text-black fw-bold">{cat.name}</CTableDataCell>
-                  <CTableDataCell className="text-black">{cat.description || 'Sin descripción.'}</CTableDataCell>
+                  <CTableDataCell style={{ color: 'var(--text-primary)' }}>{cat.id}</CTableDataCell>
+                  <CTableDataCell style={{ color: 'var(--text-primary)', fontWeight: 700 }}>{cat.name}</CTableDataCell>
+                  <CTableDataCell style={{ color: 'var(--text-primary)' }}>{cat.description || 'Sin descripción.'}</CTableDataCell>
                   <CTableDataCell className="text-center">
                     <CButton size="sm" color="dark" onClick={() => handleDeleteCategory(cat.id, cat.name)} style={{ border: '1px solid rgba(255,255,255,0.1)' }}>
                       <CIcon icon={cilTrash} className="text-danger" /> Eliminar

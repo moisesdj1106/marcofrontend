@@ -58,7 +58,7 @@ const Cart = () => {
 
   return (
     <CContainer className="py-4">
-      <h2 className="text-black fw-bold mb-4">Carrito de Compras</h2>
+      <h2 className="fw-bold mb-4" style={{ color: 'var(--text-primary)' }}>Carrito de Compras</h2>
       
       <CRow className="g-4">
         {/* Tabla de Items */}

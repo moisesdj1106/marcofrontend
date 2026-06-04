@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
+import { getApiUrl } from '../../utils/api';
 import { 
   CContainer, 
   CRow, 
@@ -30,7 +31,7 @@ const Dashboard = () => {
   const fetchDashboardStats = async () => {
     setLoading(true);
     try {
-      const response = await fetch('http://localhost:4000/api/reports/dashboard-stats', {
+      const response = await fetch(getApiUrl('/api/reports/dashboard-stats'), {
         headers: getAuthHeaders()
       });
       const data = await response.json();
@@ -86,7 +87,7 @@ const Dashboard = () => {
             <CCardBody className="d-flex flex-column justify-content-between p-4">
               <span className="text-secondary small text-uppercase tracking-wider">Ganancias Totales</span>
               <div className="my-2">
-                <span className="h2 fw-extrabold text-white">{formatCOP(stats.summary.total_revenue)}</span>
+                <span className="h2 fw-extrabold" style={{ color: 'var(--text-primary)' }}>{formatCOP(stats.summary.total_revenue)}</span>
               </div>
               <span className="text-success small">Ventas Confirmadas Stripe</span>
             </CCardBody>
@@ -97,14 +98,14 @@ const Dashboard = () => {
             <CCardBody className="d-flex flex-column justify-content-between p-4">
               <span className="text-secondary small text-uppercase tracking-wider">Órdenes Exitosas</span>
               <div className="my-2">
-                <span className="h2 fw-extrabold text-white">{stats.summary.completed_orders}</span>
+                <span className="h2 fw-extrabold" style={{ color: 'var(--text-primary)' }}>{stats.summary.completed_orders}</span>
               </div>
               <span className="text-secondary small">Transacciones Aprobadas</span>
             </CCardBody>
           </CCard>
         </CCol>
         <CCol sm={6} lg={3}>
-          <CCard className="glass-panel border-0 text-white h-100">
+          <CCard className="glass-panel border-0 h-100">
             <CCardBody className="d-flex flex-column justify-content-between p-4">
               <span className="text-secondary small text-uppercase tracking-wider">Órdenes Rechazadas</span>
               <div className="my-2">
@@ -133,7 +134,7 @@ const Dashboard = () => {
           <div className="glass-panel p-4 h-100">
             <div className="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
               <div>
-                <h4 className="text-white fw-bold m-0 text-uppercase tracking-wide">Desempeño de Ventas</h4>
+                <h4 className="fw-bold m-0 text-uppercase tracking-wide" style={{ color: 'var(--text-primary)' }}>Desempeño de Ventas</h4>
                 <p className="text-muted small mb-0">Evolución de los ingresos de la tienda</p>
               </div>
               <div style={{ width: '180px' }}>
@@ -156,36 +157,25 @@ const Dashboard = () => {
               </div>
             ) : (
               <div>
-                {/* Contenedor del gráfico de barras CSS interactivo y premium */}
-                <div className="d-flex align-items-end justify-content-between gap-2 pt-4 px-2 mb-4" style={{ height: '240px', borderBottom: '1px solid rgba(255,255,255,0.1)' }}>
-                  {activePeriodData.map((item, idx) => {
-                    const heightPercent = (item.total_sales / maxSalesValue) * 100;
-                    return (
-                      <div 
-                        key={idx} 
-                        className="d-flex flex-column align-items-center position-relative group" 
-                        style={{ flex: 1, minWidth: '20px' }}
-                      >
-                        {/* Tooltip con valor exacto al hover */}
-                        <div className="bg-black text-white text-xs px-2 py-1 rounded position-absolute opacity-0 group-hover:opacity-100 transition-opacity" style={{ bottom: `${heightPercent + 10}%`, zIndex: 10, whiteSpace: 'nowrap', fontSize: '0.75rem', border: '1px solid rgba(255,255,255,0.2)' }}>
-                          {formatCOP(item.total_sales)} ({item.total_orders} ped.)
+                {/* Contenedor del gráfico: barras verticales con ancho fijo y scroll horizontal si es necesario */}
+                <div className="pt-4 px-2 mb-4" style={{ height: '260px', borderBottom: '1px solid rgba(255,255,255,0.08)', paddingBottom: '12px', overflowX: 'auto' }}>
+                  <div style={{ display: 'flex', alignItems: 'flex-end', gap: '10px', height: '100%', padding: '0 8px' }}>
+                      {activePeriodData.map((item, idx) => {
+                      const heightPercent = (item.total_sales / maxSalesValue) * 100;
+                      const barHeight = Math.max(heightPercent, 3);
+                      return (
+                          <div key={idx} style={{ width: 36, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                              <div title={`${formatCOP(item.total_sales)} (${item.total_orders} ped.)`} style={{ marginBottom: 8, fontSize: '0.7rem', color: 'var(--text-primary)', fontWeight: 600 }}>{formatCOP(item.total_sales)}</div>
+                          <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'flex-end' }}>
+                            <div style={{ width: '100%', height: `${barHeight}%`, minHeight: '8px', background: 'linear-gradient(180deg, #ff9500 0%, #ff3b30 100%)', boxShadow: '0 6px 18px rgba(255,90,50,0.18)', transition: 'height 0.5s' }} />
+                          </div>
+                            <div style={{ marginTop: 8, fontSize: '0.7rem', color: 'var(--text-secondary)', textAlign: 'center', maxWidth: 60, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{item.period}</div>
                         </div>
-                        {/* Barra */}
-                        <div 
-                          className="w-100 rounded-top" 
-                          style={{ 
-                            height: `${Math.max(heightPercent, 3)}%`, 
-                            background: 'linear-gradient(to top, #ff3b30, #ff9500)',
-                            opacity: 0.85,
-                            boxShadow: '0 0 10px rgba(255,59,48,0.25)',
-                            transition: 'height 0.5s ease-out'
-                          }}
-                        ></div>
-                      </div>
-                    );
-                  })}
+                      );
+                    })}
+                  </div>
                 </div>
-                {/* Etiquetas de períodos */}
+                {/* Etiqueta resumen (inicio - medio - fin) */}
                 <div className="d-flex justify-content-between text-muted" style={{ fontSize: '0.75rem' }}>
                   <span>{activePeriodData[0]?.period}</span>
                   <span>{activePeriodData[Math.floor(activePeriodData.length / 2)]?.period}</span>
@@ -207,9 +197,9 @@ const Dashboard = () => {
                 <CTableBody>
                   {[...activePeriodData].reverse().slice(0, 5).map((item, idx) => (
                     <CTableRow key={idx} className="border-bottom border-secondary">
-                      <CTableDataCell className="text-white fw-semibold">{item.period}</CTableDataCell>
-                      <CTableDataCell className="text-center">{item.total_orders} exitosas</CTableDataCell>
-                      <CTableDataCell className="text-end text-white">{formatCOP(item.total_sales)}</CTableDataCell>
+                      <CTableDataCell className="fw-semibold" style={{ color: 'var(--text-primary)' }}>{item.period}</CTableDataCell>
+                      <CTableDataCell className="text-center" style={{ color: 'var(--text-secondary)' }}>{item.total_orders} exitosas</CTableDataCell>
+                      <CTableDataCell className="text-end" style={{ color: 'var(--text-primary)' }}>{formatCOP(item.total_sales)}</CTableDataCell>
                     </CTableRow>
                   ))}
                 </CTableBody>
@@ -235,18 +225,18 @@ const Dashboard = () => {
               ) : (
                 <div className="d-flex flex-column gap-3">
                   {stats.topProducts.map((prod, idx) => (
-                    <div key={prod.id} className="d-flex align-items-center justify-content-between p-2 rounded bg-dark border border-secondary" style={{ backgroundColor: 'rgba(255,255,255,0.01)' }}>
+                    <div key={prod.id} className="d-flex align-items-center justify-content-between p-2 rounded" style={{ backgroundColor: 'rgba(255,255,255,0.01)', border: '1px solid rgba(255,255,255,0.03)' }}>
                       <div className="d-flex align-items-center gap-2">
-                        <span className="fw-extrabold text-secondary me-1" style={{ fontSize: '1.25rem' }}>#{idx + 1}</span>
+                        <span className="fw-extrabold text-secondary me-1" style={{ fontSize: '1.25rem', color: 'var(--text-secondary)' }}>#{idx + 1}</span>
                         <div>
-                          <span className="text-white fw-semibold d-block text-truncate" style={{ maxWidth: '160px' }} title={prod.name}>
+                          <span className="fw-semibold d-block text-truncate" style={{ maxWidth: '160px', color: 'var(--text-primary)' }} title={prod.name}>
                             {prod.name}
                           </span>
-                          <span className="text-muted small">{prod.qty_sold} unidades vendidas</span>
+                          <span className="text-muted small" style={{ color: 'var(--text-secondary)' }}>{prod.qty_sold} unidades vendidas</span>
                         </div>
                       </div>
                       <div className="text-end">
-                        <span className="text-success small fw-bold d-block">{formatCOP(prod.revenue)}</span>
+                        <span className="small fw-bold d-block" style={{ color: 'var(--text-primary)' }}>{formatCOP(prod.revenue)}</span>
                       </div>
                     </div>
                   ))}

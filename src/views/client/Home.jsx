@@ -119,7 +119,7 @@ const Home = () => {
           description: 'Kit completo de frenos delanteros para motos deportivas',
           price: 85000,
           stock: 15,
-          image_url: '/moto.jpg',
+          image_url: 'https://http2.mlstatic.com/D_NQ_NP_681684-MLV52472050861_112022-O.webp',
           category_name: 'Frenos'
         },
         {

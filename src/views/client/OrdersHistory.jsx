@@ -145,7 +145,7 @@ const OrdersHistory = () => {
     doc.setDrawColor(220, 220, 220);
     doc.rect(x, y, colWidths.reduce((a, b) => a + b, 0), 24);
 
-    doc.setFontSize(10);
+    doc.setFontSize(8);
     doc.setTextColor(80, 80, 80);
     doc.text('Cant', x + 8, y + 16);
     doc.text('Descripción', x + colWidths[0] + 8, y + 16);
@@ -155,7 +155,7 @@ const OrdersHistory = () => {
     y += 28;
 
     // Items
-    doc.setFontSize(10);
+    doc.setFontSize(8);
     for (let i = 0; i < order.items.length; i++) {
       const item = order.items[i];
       const rowHeight = 20;
@@ -241,14 +241,14 @@ const OrdersHistory = () => {
         <div className="d-flex flex-column gap-4">
           {orders.map((order) => (
             <CCard key={order.id} className="glass-panel border-0 text-white overflow-hidden">
-              <CCardHeader className="p-3 d-flex flex-wrap justify-content-between align-items-center gap-2" style={{ backgroundColor: 'rgba(255,255,255,0.02)', borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
+                  <CCardHeader className="p-3 d-flex flex-wrap justify-content-between align-items-center gap-2" style={{ backgroundColor: 'rgba(255,255,255,0.02)', borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
                 <div>
                   <span className="text-muted small d-block">Número de Pedido:</span>
-                  <span className="fw-bold" style={{ color: 'var(--text-primary)' }}>ORD-{order.id}</span>
+                  <span className="fw-bold price" style={{ color: 'var(--text-primary)' }}>ORD-{order.id}</span>
                 </div>
                 <div>
                   <span className="text-muted small d-block">Fecha de Transacción:</span>
-                  <span className="fw-bold" style={{ color: 'var(--text-primary)' }}>{formatDate(order.created_at)}</span>
+                  <span className="fw-bold price-sm" style={{ color: 'var(--text-primary)' }}>{formatDate(order.created_at)}</span>
                 </div>
                 <div>
                   <span className="text-muted small d-block">Estado de Pago:</span>
@@ -256,7 +256,7 @@ const OrdersHistory = () => {
                 </div>
                 <div className="text-end">
                   <span className="text-muted small d-block">Total Cobrado:</span>
-                  <span className="h5 mb-0 text-white fw-bold">{formatCOP(order.total_amount)}</span>
+                  <span className="price text-white fw-bold">{formatCOP(order.total_amount)}</span>
                 </div>
               </CCardHeader>
               

@@ -145,7 +145,7 @@ const CheckoutForm = ({ setPreventEmptyRedirect }) => {
           <div className="mb-4">
             <div className="text-secondary small d-block mb-2">Pago simulado</div>
             <div className="p-3 bg-dark rounded-3 text-white small">
-              El pago se procesará en modo de prueba. No se usa Stripe en este flujo.
+              El pago se procesará en modo de prueba.
             </div>
           </div>
 

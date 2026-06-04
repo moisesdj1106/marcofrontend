@@ -150,18 +150,18 @@ const CheckoutForm = ({ setPreventEmptyRedirect }) => {
           </div>
 
           <div className="glass-panel p-4 p-3 mb-4 bg-dark-secondary rounded-3">
-        <h5 className="text-white fw-semibold mb-3">Resumen de Compra</h5>
+        <h5 className="text-black fw-semibold mb-3">Resumen de Compra</h5>
         <div className="d-flex justify-content-between align-items-center mb-2">
           <span className="text-secondary">Subtotal</span>
-          <span className="text-white fw-semibold">{formatCOP(displayedSubtotal)}</span>
+          <span className="text-black fw-semibold">{formatCOP(displayedSubtotal)}</span>
         </div>
         <div className="d-flex justify-content-between align-items-center mb-2">
           <span className="text-secondary">IVA 16%</span>
-          <span className="text-white fw-semibold">{formatCOP(displayedTax)}</span>
+          <span className="text-black fw-semibold">{formatCOP(displayedTax)}</span>
         </div>
         <div className="border-top border-secondary pt-3 d-flex justify-content-between align-items-center">
-          <span className="text-white fw-bold">Total a pagar</span>
-          <span className="text-white fw-bold fs-5">{formatCOP(displayedTotal)}</span>
+          <span className="text-black fw-bold">Total a pagar</span>
+          <span className="text-black fw-bold fs-5">{formatCOP(displayedTotal)}</span>
         </div>
       </div>
 
@@ -236,17 +236,17 @@ const Checkout = () => {
                       height="35" 
                       className="rounded object-fit-cover" 
                     />
-                    <span className="small text-truncate" style={{ maxWidth: '200px' }}>{item.name}</span>
-                    <span className="text-muted small">x{item.quantity}</span>
+                    <span className="small text-black" style={{ maxWidth: '200px' }}>{item.name}</span>
+                    <span className="text-black small">x{item.quantity}</span>
                   </div>
-                  <span className="small fw-semibold">{formatCOP(item.price * item.quantity)}</span>
+                  <span className="small fw-semibold text-black">{formatCOP(item.price * item.quantity)}</span>
                 </div>
               ))}
             </div>
 
             <div className="d-flex justify-content-between align-items-center">
-              <span className="h5 text-secondary">Total a Pagar:</span>
-              <span className="h3 text-white fw-extrabold">{formatCOP(getCartTotal())}</span>
+              <span className="h5 text-black">Total a Pagar:</span>
+              <span className="h3 text-black fw-extrabold">{formatCOP(getCartTotal())}</span>
             </div>
           </div>
         </CCol>

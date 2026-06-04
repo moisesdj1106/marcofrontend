@@ -113,9 +113,10 @@ const CheckoutForm = ({ setPreventEmptyRedirect }) => {
 
   const formatCOP = (val) => {
     return new Intl.NumberFormat('es-CO', {
-      style: 'currency',
-      currency: 'COP',
-      minimumFractionDigits: 0
+    style: 'currency',
+    currency: 'VES',
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2
     }).format(val);
   };
 

@@ -68,26 +68,7 @@ const AboutUs = () => {
             <p className="lead mb-5 opacity-90" style={{ maxWidth: '800px', margin: '0 auto', fontSize: '1.25rem' }}>
                entregando confianza, seguridad y rendimiento a motociclistas en toda Venezuela
             </p>
-            <div className="d-flex flex-wrap justify-content-center gap-3">
-              <CButton 
-                color="light" 
-                size="lg"
-                as={Link}
-                to="/"
-                className="px-4 py-3 fw-bold"
-              >
-                Ver Catálogo
-              </CButton>
-              <CButton 
-                color="outline-light" 
-                variant="outline"
-                size="lg"
-                className="px-4 py-3 text-white"
-                onClick={() => window.open('tel:+573001234567')}
-              >
-                📞 Contactar Ahora
-              </CButton>
-            </div>
+
           </div>
         </CContainer>
       </section>
@@ -277,7 +258,7 @@ const AboutUs = () => {
                     background: 'linear-gradient(135deg, var(--accent-blue) 0%, var(--accent-orange) 100%)',
                     border: 'none'
                   }}
-                  onClick={() => window.open('/horariooctavo.pdf', '_blank')}
+                  onClick={() => window.open('/acta.pdf', '_blank')}
                 >
                   📥 Abrir Documento PDF
                 </CButton>

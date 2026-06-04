@@ -47,7 +47,7 @@ const Cart = () => {
       <CContainer className="py-5 text-center">
         <div className="glass-panel py-5 px-4 my-5">
           <CIcon icon={cilCart} size="custom-size" className="text-secondary mb-4" style={{ height: '80px' }} />
-          <h2 className="text-white mb-2 font-bold">Tu carrito está vacío</h2>
+          <h2 className="text-black mb-2 font-bold">Tu carrito está vacío</h2>
           <p className="text-secondary mb-4">Aún no has agregado repuestos a tu compra.</p>
           <CButton as={Link} to="/" className="btn-red px-4 py-2">
             Ver Catálogo de Repuestos
@@ -88,14 +88,14 @@ const Cart = () => {
                           className="rounded object-fit-cover" 
                         />
                         <div>
-                          <Link to={`/producto/${item.id}`} className="text-white text-decoration-none fw-semibold d-block">
+                          <Link to={`/producto/${item.id}`} className="text-black text-decoration-none fw-semibold d-block">
                             {item.name}
                           </Link>
                           <span className="text-muted small">Ref: #{item.id}</span>
                         </div>
                       </div>
                     </CTableDataCell>
-                    <CTableDataCell className="text-center text-white">
+                    <CTableDataCell className="text-center text-black">
                       {formatCOP(item.price)}
                     </CTableDataCell>
                     <CTableDataCell className="text-center">
@@ -106,7 +106,7 @@ const Cart = () => {
                         >
                           -
                         </button>
-                        <span className="px-2 text-white font-semibold" style={{ minWidth: '30px', textAlign: 'center' }}>
+                        <span className="px-2 text-black font-semibold" style={{ minWidth: '30px', textAlign: 'center' }}>
                           {item.quantity}
                         </span>
                         <button 
@@ -117,7 +117,7 @@ const Cart = () => {
                         </button>
                       </div>
                     </CTableDataCell>
-                    <CTableDataCell className="text-end text-white fw-semibold">
+                    <CTableDataCell className="text-end text-black fw-semibold">
                       {formatCOP(item.price * item.quantity)}
                     </CTableDataCell>
                     <CTableDataCell className="text-center">
@@ -157,7 +157,7 @@ const Cart = () => {
 
         {/* Resumen del Pedido */}
         <CCol lg={4}>
-          <CCard className="glass-panel border-0 text-white">
+          <CCard className="glass-panel border-0 text-black">
             <CCardBody className="p-4 d-flex flex-column gap-3">
               <h4 className="fw-bold border-bottom border-secondary pb-3 text-uppercase">Resumen de Compra</h4>
               
@@ -175,7 +175,7 @@ const Cart = () => {
 
               <div className="d-flex justify-content-between align-items-center py-2">
                 <span className="h5 fw-bold mb-0">Total:</span>
-                <span className="h3 text-white fw-extrabold mb-0">{formatCOP(getCartTotal())}</span>
+                <span className="h3 text-black fw-extrabold mb-0">{formatCOP(getCartTotal())}</span>
               </div>
 
               <div className="mt-2 d-grid">

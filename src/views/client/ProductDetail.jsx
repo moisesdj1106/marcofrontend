@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useCart } from '../../context/CartContext';
+import { API_URL } from '../../utils/api';
+import { getProductImage } from '../../utils/imageHelper';
 import { 
   CContainer, 
   CRow, 
@@ -29,27 +31,34 @@ const ProductDetail = () => {
     fetchProductDetails();
   }, [id]);
 
+  const [error, setError] = useState(null);
+
   const fetchProductDetails = async () => {
     setLoading(true);
+    setError(null);
     try {
-      // 1. Obtener detalles del producto base
-      const prodRes = await fetch(`http://localhost:4000/api/products/${id}`);
+      const prodRes = await fetch(`${API_URL}/api/products/${id}`);
       if (!prodRes.ok) {
-        throw new Error('Producto no encontrado');
+        if (prodRes.status === 404) {
+          throw new Error('Producto no encontrado');
+        }
+        throw new Error(`HTTP error! status: ${prodRes.status}`);
       }
       const prodData = await prodRes.json();
       setProduct(prodData);
       setQuantity(1);
 
-      // 2. Obtener productos sugeridos para venta cruzada (cross-selling)
-      const recRes = await fetch(`http://localhost:4000/api/products/${id}/recommendations`);
-      const recData = await recRes.json();
+      const recRes = await fetch(`${API_URL}/api/products/${id}/recommendations`);
       if (recRes.ok) {
+        const recData = await recRes.json();
         setRecommendations(recData);
       }
-    } catch (error) {
-      console.error('Error al cargar detalle del producto:', error);
-      navigate('/');
+    } catch (fetchError) {
+      console.error('Error al cargar detalle del producto:', fetchError);
+      setError(fetchError.message || 'Error al cargar el producto');
+      if (fetchError.message === 'Producto no encontrado') {
+        navigate('/');
+      }
     } finally {
       setLoading(false);
     }
@@ -83,6 +92,16 @@ const ProductDetail = () => {
     );
   }
 
+  if (error) {
+    return (
+      <CContainer className="py-5 text-center">
+        <h2 className="text-white mb-4">No se pudo cargar el producto</h2>
+        <p className="text-secondary mb-4">{error}</p>
+        <CButton color="secondary" onClick={() => navigate('/')}>Volver al inicio</CButton>
+      </CContainer>
+    );
+  }
+
   if (!product) return null;
 
   return (
@@ -103,7 +122,7 @@ const ProductDetail = () => {
           <CCol md={6}>
             <div className="rounded-4 overflow-hidden border border-secondary" style={{ maxHeight: '420px', boxShadow: '0 8px 24px rgba(0,0,0,0.6)' }}>
               <img 
-                src={product.image_url} 
+                src={getProductImage(product.image_url)} 
                 alt={product.name} 
                 className="img-fluid w-100 h-100"
                 style={{ objectFit: 'cover', width: '100%', height: '100%', minHeight: '300px' }}
@@ -181,7 +200,7 @@ const ProductDetail = () => {
                   <div style={{ height: '140px', overflow: 'hidden' }}>
                     <CCardImage
                       orientation="top"
-                      src={item.image_url}
+                      src={getProductImage(item.image_url)}
                       alt={item.name}
                       style={{ objectFit: 'cover', height: '100%', width: '100%' }}
                     />

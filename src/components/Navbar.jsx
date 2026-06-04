@@ -21,6 +21,8 @@ import {
 import { CIcon } from '@coreui/icons-react';
 import { cilCart, cilAccountLogout, cilUser, cilSpeedometer, cilList, cilShieldAlt, cilMenu } from '@coreui/icons';
 
+
+
 const Navbar = () => {
   const { isAuthenticated, isAdmin, user, logout } = useAuth();
   const { getCartItemCount } = useCart();
@@ -40,7 +42,7 @@ const Navbar = () => {
         <CNavbarBrand as={Link} to="/" className="d-flex align-items-center gap-2 me-4">
           <div className="logo-modern">
             <img 
-              src="src/public/logo.png" 
+              src="/logo.png" 
               alt="Antigravity Repuestos" 
               className="logo-img"
               onError={(e) => {

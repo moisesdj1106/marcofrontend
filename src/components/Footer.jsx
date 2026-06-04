@@ -11,7 +11,7 @@ const Footer = () => {
             <div className="footer-brand mb-4">
               <div className="logo-footer mb-3">
                 <img 
-                  src="src/public/Gemini_Generated_Image_7oobzk7oobzk7oob.png" 
+                  src="/Gemini_Generated_Image_7oobzk7oobzk7oob.png" 
                   alt="Antigravity Repuestos"
                   className="footer-logo-img"
                   onError={(e) => {

@@ -99,7 +99,7 @@ const AboutUs = () => {
             <CCol lg={6} className="animate-slide-in-left">
               <div className="position-relative">
                 <img 
-                  src="/src/public/moto.jpg" 
+                  src="/moto.jpg" 
                   alt="Nuestra Historia" 
                   className="img-fluid rounded-4 shadow-lg"
                   style={{ 
@@ -277,7 +277,7 @@ const AboutUs = () => {
                     background: 'linear-gradient(135deg, var(--accent-blue) 0%, var(--accent-orange) 100%)',
                     border: 'none'
                   }}
-                  onClick={() => window.open('/src/public/horariooctavo.pdf', '_blank')}
+                  onClick={() => window.open('/horariooctavo.pdf', '_blank')}
                 >
                   📥 Abrir Documento PDF
                 </CButton>

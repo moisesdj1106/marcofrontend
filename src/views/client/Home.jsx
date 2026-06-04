@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { useCart } from '../../context/CartContext';
+import { API_URL } from '../../utils/api';
+import { getProductImage } from '../../utils/imageHelper';
 import { 
   CContainer, 
   CRow, 
@@ -38,7 +40,7 @@ const Home = () => {
       id: 1,
       title: "Potencia Deportiva",
       subtitle: "Repuestos de alto rendimiento para motos deportivas",
-      image: "/src/public/otro.png",
+      image: "/otro.png",
       buttonText: "Ver Repuestos",
       link: "#productos",
       textColor: "text-white"
@@ -48,7 +50,7 @@ const Home = () => {
       id: 2,
       title: "Garantía Original 100%",
       subtitle: "Todos nuestros repuestos cuentan con garantía del fabricante",
-      image: "/src/public/baner1.png",
+      image: "/baner1.png",
       buttonText: "Conocer Más",
       link: "/nosotros",
       textColor: "white"
@@ -57,29 +59,11 @@ const Home = () => {
       id: 3,
       title: "Envío Express 24h",
       subtitle: "Entrega en 24 horas para todo Medellín y área metropolitana",
-      image: "/src/public/baner2.png",
+      image: "/baner2.png",
       buttonText: "Comprar Ahora",
       link: "#productos",
       textColor: "white"
-    },
-    /*{
-      id: 4,
-      title: "Accesorios Premium",
-      subtitle: "Todo lo que necesitas para personalizar tu moto",
-      image: "/src/public/moto.jpg", // Puedes cambiar esta imagen
-      buttonText: "Explorar",
-      link: "#productos",
-      textColor: "white"
-    },
-    {
-      id: 5,
-      title: "Expertos en Mecánica",
-      subtitle: "Asesoría técnica especializada por nuestro equipo",
-      image: "/src/public/otro.png", // Puedes cambiar esta imagen
-      buttonText: "Consultar",
-      link: "/nosotros",
-      textColor: "white"
-    }*/
+    }
   ];
 
   useEffect(() => {
@@ -102,7 +86,7 @@ const Home = () => {
 
   const fetchCategories = async () => {
     try {
-      const response = await fetch('http://localhost:4000/api/products/categories');
+      const response = await fetch(`${API_URL}/api/products/categories`);
       if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
       const data = await response.json();
       setCategories(data);
@@ -121,7 +105,7 @@ const Home = () => {
 
   const fetchFeaturedProducts = async () => {
     try {
-      const response = await fetch('http://localhost:4000/api/products/featured');
+      const response = await fetch(`${API_URL}/api/products/featured`);
       if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
       const data = await response.json();
       setFeaturedProducts(data.slice(0, 4));
@@ -135,7 +119,7 @@ const Home = () => {
           description: 'Kit completo de frenos delanteros para motos deportivas',
           price: 85000,
           stock: 15,
-          image_url: '/src/public/moto.jpg',
+          image_url: '/moto.jpg',
           category_name: 'Frenos'
         },
         {
@@ -144,7 +128,7 @@ const Home = () => {
           description: 'Bujía de alto rendimiento para mejor combustión',
           price: 35000,
           stock: 8,
-          image_url: '/src/public/moto.jpg',
+          image_url: '/moto.jpg',
           category_name: 'Motor'
         },
         {
@@ -153,7 +137,7 @@ const Home = () => {
           description: 'Amortiguador ajustable para mejor suspensión',
           price: 120000,
           stock: 5,
-          image_url: '/src/public/moto.jpg',
+          image_url: '/moto.jpg',
           category_name: 'Suspensión'
         },
         {
@@ -162,7 +146,7 @@ const Home = () => {
           description: 'Batería de gel mantenimiento libre',
           price: 95000,
           stock: 12,
-          image_url: '/src/public/moto.jpg',
+          image_url: '/moto.jpg',
           category_name: 'Eléctrico'
         }
       ]);
@@ -176,7 +160,7 @@ const Home = () => {
       if (search) queryParams.append('search', search);
       if (categoryId) queryParams.append('categoryId', categoryId);
 
-      const response = await fetch(`http://localhost:4000/api/products?${queryParams.toString()}`);
+      const response = await fetch(`${API_URL}/api/products?${queryParams.toString()}`);
       if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
       const data = await response.json();
       setProducts(data);
@@ -193,7 +177,7 @@ const Home = () => {
           description: 'Kit completo de frenos delanteros para motos deportivas',
           price: 85000,
           stock: 15,
-          image_url: '/src/public/moto.jpg',
+          image_url: '/moto.jpg',
           category_name: 'Frenos'
         },
         {
@@ -202,7 +186,7 @@ const Home = () => {
           description: 'Bujía de alto rendimiento para mejor combustión',
           price: 35000,
           stock: 8,
-          image_url: '/src/public/moto.jpg',
+          image_url: '/moto.jpg',
           category_name: 'Motor'
         },
         {
@@ -211,7 +195,7 @@ const Home = () => {
           description: 'Amortiguador ajustable para mejor suspensión',
           price: 120000,
           stock: 5,
-          image_url: '/src/public/moto.jpg',
+          image_url: '/moto.jpg',
           category_name: 'Suspensión'
         },
         {
@@ -220,7 +204,7 @@ const Home = () => {
           description: 'Batería de gel mantenimiento libre',
           price: 95000,
           stock: 12,
-          image_url: '/src/public/moto.jpg',
+          image_url: '/moto.jpg',
           category_name: 'Eléctrico'
         },
         {
@@ -229,7 +213,7 @@ const Home = () => {
           description: 'Cadena O-ring para mayor durabilidad',
           price: 65000,
           stock: 20,
-          image_url: '/src/public/moto.jpg',
+          image_url: '/moto.jpg',
           category_name: 'Transmisión'
         },
         {
@@ -238,7 +222,7 @@ const Home = () => {
           description: 'Filtro de alto flujo lavable',
           price: 75000,
           stock: 10,
-          image_url: '/src/public/moto.jpg',
+          image_url: '/moto.jpg',
           category_name: 'Motor'
         },
         {
@@ -247,7 +231,7 @@ const Home = () => {
           description: 'Pastillas orgánicas para frenado suave',
           price: 45000,
           stock: 25,
-          image_url: '/src/public/moto.jpg',
+          image_url: '/moto.jpg',
           category_name: 'Frenos'
         },
         {
@@ -256,12 +240,10 @@ const Home = () => {
           description: 'Aceite sintético 10W40 para alto rendimiento',
           price: 55000,
           stock: 30,
-          image_url: '/src/public/moto.jpg',
+          image_url: '/moto.jpg',
           category_name: 'Lubricantes'
         }
       ];
-      
-      // Filtrar por búsqueda si existe
       let filteredProducts = exampleProducts;
       if (search) {
         const searchLower = search.toLowerCase();
@@ -270,14 +252,11 @@ const Home = () => {
           p.description.toLowerCase().includes(searchLower)
         );
       }
-      
-      // Filtrar por categoría si existe
       if (categoryId) {
         filteredProducts = filteredProducts.filter(p => 
           p.category_name.toLowerCase().includes(categories.find(c => c.id == categoryId)?.name?.toLowerCase() || '')
         );
       }
-      
       setProducts(filteredProducts);
     } finally {
       setLoading(false);
@@ -526,7 +505,7 @@ const Home = () => {
                     <div className="position-relative" style={{ height: '200px', overflow: 'hidden' }}>
                       <CCardImage
                         orientation="top"
-                        src={product.image_url || "/src/public/moto.jpg"}
+                          src={getProductImage(product.image_url)}
                         alt={product.name}
                         style={{ objectFit: 'cover', height: '100%', width: '100%' }}
                       />
@@ -697,7 +676,7 @@ const Home = () => {
                       <div className="position-relative" style={{ height: '200px', overflow: 'hidden' }}>
                         <CCardImage
                           orientation="top"
-                          src={product.image_url || "/src/public/moto.jpg"}
+                            src={getProductImage(product.image_url)}
                           alt={product.name}
                           style={{ objectFit: 'cover', height: '100%', width: '100%' }}
                         />
@@ -809,7 +788,7 @@ const Home = () => {
             <CCol lg={4} className="text-center">
               <div className="cta-image mt-4 mt-lg-0">
                 <img 
-                  src="/src/public/Gemini_Generated_Image_7oobzk7oobzk7oob.png" 
+                  src="/Gemini_Generated_Image_7oobzk7oobzk7oob.png" 
                   alt="Asesoría Técnica"
                   className="img-fluid"
                   style={{ 

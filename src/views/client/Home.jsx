@@ -128,7 +128,7 @@ const Home = () => {
           description: 'Bujía de alto rendimiento para mejor combustión',
           price: 35000,
           stock: 8,
-          image_url: '/moto.jpg',
+          image_url: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTAMpN9XNe-kFm7PN9OCHWBANS47d-_icvBcA&s',
           category_name: 'Motor'
         },
         {
@@ -137,7 +137,7 @@ const Home = () => {
           description: 'Amortiguador ajustable para mejor suspensión',
           price: 120000,
           stock: 5,
-          image_url: '/moto.jpg',
+          image_url: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRjJU6MJiLMGqkNMLkU1qBpMB78w69CxU4g4w&s',
           category_name: 'Suspensión'
         },
         {
@@ -146,7 +146,7 @@ const Home = () => {
           description: 'Batería de gel mantenimiento libre',
           price: 95000,
           stock: 12,
-          image_url: '/moto.jpg',
+          image_url: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSJwELfYbD3zV24HJcO1Mh4mD9uuSKziTRKxA&s',
           category_name: 'Eléctrico'
         }
       ]);

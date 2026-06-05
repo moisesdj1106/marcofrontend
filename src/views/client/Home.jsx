@@ -764,27 +764,7 @@ const Home = () => {
               <p className="lead mb-4 opacity-90">
                 Nuestros expertos te asesorarán gratuitamente para que encuentres la pieza perfecta para tu motocicleta.
               </p>
-              <div className="d-flex flex-wrap gap-3">
-                <CButton 
-                  color="light" 
-                  size="lg"
-                  as={Link}
-                  to="/nosotros"
-                  className="px-4 py-3 fw-bold"
-                >
-                  Contactar Asesor
-                  <CIcon icon={cilArrowRight} className="ms-2" />
-                </CButton>
-                <CButton 
-                  color="outline-light" 
-                  variant="outline"
-                  size="lg"
-                  className="px-4 py-3 text-white"
-                  onClick={() => window.open('tel:+58 0414-758-9654')}
-                >
-                  📞 Llamar Ahora
-                </CButton>
-              </div>
+
             </CCol>
             <CCol lg={4} className="text-center">
               <div className="cta-image mt-4 mt-lg-0">

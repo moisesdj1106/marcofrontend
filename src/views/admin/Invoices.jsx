@@ -169,7 +169,7 @@ const Invoices = () => {
     doc.setDrawColor(220, 220, 220);
     doc.rect(x, y, colWidths.reduce((a, b) => a + b, 0), 24);
 
-    doc.setFontSize(10);
+    doc.setFontSize(8);
     doc.setTextColor(80, 80, 80);
     doc.text('Cant', x + 8, y + 16);
     doc.text('Descripción', x + colWidths[0] + 8, y + 16);
@@ -179,7 +179,7 @@ const Invoices = () => {
     y += 28;
 
     // Items
-    doc.setFontSize(10);
+    doc.setFontSize(8);
     const items = order.items || [];
     for (let i = 0; i < items.length; i++) {
       const item = items[i];

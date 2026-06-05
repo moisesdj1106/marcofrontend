@@ -27,6 +27,9 @@ const AuditLogs = () => {
   const [filterEntity, setFilterEntity] = useState('');
   const [filterDateFrom, setFilterDateFrom] = useState('');
   const [filterDateTo, setFilterDateTo] = useState('');
+  const [page, setPage] = useState(1);
+  const [totalLogs, setTotalLogs] = useState(0);
+  const [pageSize] = useState(10);
   const { getAuthHeaders } = useAuth();
 
   useEffect(() => {
@@ -42,18 +45,23 @@ const AuditLogs = () => {
       const e = opts.entity !== undefined ? opts.entity : filterEntity;
       const df = opts.date_from !== undefined ? opts.date_from : filterDateFrom;
       const dt = opts.date_to !== undefined ? opts.date_to : filterDateTo;
+      const currentPage = opts.page !== undefined ? opts.page : page;
 
       if (u) params.append('user', u);
       if (a) params.append('action', a);
       if (e) params.append('entity', e);
       if (df) params.append('date_from', df);
       if (dt) params.append('date_to', dt);
+      params.append('page', currentPage);
+      params.append('pageSize', pageSize);
 
       const url = getApiUrl(`/api/audit?${params.toString()}`);
       const response = await fetch(url, { headers: getAuthHeaders() });
       const data = await response.json();
       if (response.ok) {
-        setLogs(data);
+        setLogs(data.logs || []);
+        setTotalLogs(data.total || 0);
+        setPage(data.page || currentPage);
       }
     } catch (err) {
       console.error('Error al recuperar logs de auditoría:', err);
@@ -68,7 +76,8 @@ const AuditLogs = () => {
     setFilterEntity('');
     setFilterDateFrom('');
     setFilterDateTo('');
-    fetchAuditLogs({ user: '', action: '', entity: '', date_from: '', date_to: '' });
+    setPage(1);
+    fetchAuditLogs({ user: '', action: '', entity: '', date_from: '', date_to: '', page: 1 });
   };
 
   const formatDate = (dateString) => {
@@ -115,6 +124,8 @@ const AuditLogs = () => {
       setExpandedLogId(id);
     }
   };
+
+  const totalPages = Math.max(1, Math.ceil(totalLogs / pageSize));
 
   return (
     <CContainer className="py-4">
@@ -222,6 +233,29 @@ const AuditLogs = () => {
               ))}
             </CTableBody>
           </CTable>
+          <div className="d-flex justify-content-between align-items-center mt-3">
+            <div className="text-secondary small">
+              Mostrando página {page} de {totalPages} · Total de registros: {totalLogs}
+            </div>
+            <div className="d-flex gap-2">
+              <CButton
+                size="sm"
+                color="secondary"
+                disabled={page <= 1}
+                onClick={() => fetchAuditLogs({ page: page - 1 })}
+              >
+                Anterior
+              </CButton>
+              <CButton
+                size="sm"
+                color="secondary"
+                disabled={page >= totalPages}
+                onClick={() => fetchAuditLogs({ page: page + 1 })}
+              >
+                Siguiente
+              </CButton>
+            </div>
+          </div>
         </div>
       )}
     </CContainer>

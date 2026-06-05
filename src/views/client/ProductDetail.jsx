@@ -144,7 +144,7 @@ const ProductDetail = () => {
 
             <div className="my-2">
               <span className="text-muted d-block small mb-1">Precio Unitario:</span>
-              <span className="h1 text-white fw-extrabold">{formatCOP(product.price)}</span>
+              <span className="h1 text-black fw-extrabold">{formatCOP(product.price)}</span>
             </div>
 
             <div className="d-flex align-items-center gap-3">
@@ -188,7 +188,7 @@ const ProductDetail = () => {
       {recommendations.length > 0 && (
         <div className="mt-5">
           <div className="border-bottom border-secondary pb-2 mb-4">
-            <h3 className="text-white fw-bold tracking-tight">
+            <h3 className="text-black fw-bold tracking-tight">
               ¿Por qué no llevas también? <span style={{ color: '#ff9500' }}></span>
             </h3>
             <p className="text-muted mb-0">Otros usuarios de MOTOREPUESTOS LA 33 agregaron estos complementos:</p>

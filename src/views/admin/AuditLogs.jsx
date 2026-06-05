@@ -21,18 +21,36 @@ const AuditLogs = () => {
   const [logs, setLogs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [expandedLogId, setExpandedLogId] = useState(null);
+  // filtros
+  const [filterUser, setFilterUser] = useState('');
+  const [filterAction, setFilterAction] = useState('');
+  const [filterEntity, setFilterEntity] = useState('');
+  const [filterDateFrom, setFilterDateFrom] = useState('');
+  const [filterDateTo, setFilterDateTo] = useState('');
   const { getAuthHeaders } = useAuth();
 
   useEffect(() => {
     fetchAuditLogs();
   }, []);
 
-  const fetchAuditLogs = async () => {
+  const fetchAuditLogs = async (opts = {}) => {
     setLoading(true);
     try {
-      const response = await fetch(getApiUrl('/api/audit'), {
-        headers: getAuthHeaders()
-      });
+      const params = new URLSearchParams();
+      const u = opts.user !== undefined ? opts.user : filterUser;
+      const a = opts.action !== undefined ? opts.action : filterAction;
+      const e = opts.entity !== undefined ? opts.entity : filterEntity;
+      const df = opts.date_from !== undefined ? opts.date_from : filterDateFrom;
+      const dt = opts.date_to !== undefined ? opts.date_to : filterDateTo;
+
+      if (u) params.append('user', u);
+      if (a) params.append('action', a);
+      if (e) params.append('entity', e);
+      if (df) params.append('date_from', df);
+      if (dt) params.append('date_to', dt);
+
+      const url = getApiUrl(`/api/audit?${params.toString()}`);
+      const response = await fetch(url, { headers: getAuthHeaders() });
       const data = await response.json();
       if (response.ok) {
         setLogs(data);
@@ -42,6 +60,15 @@ const AuditLogs = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  const clearFilters = () => {
+    setFilterUser('');
+    setFilterAction('');
+    setFilterEntity('');
+    setFilterDateFrom('');
+    setFilterDateTo('');
+    fetchAuditLogs({ user: '', action: '', entity: '', date_from: '', date_to: '' });
   };
 
   const formatDate = (dateString) => {
@@ -96,7 +123,22 @@ const AuditLogs = () => {
           <h2 className="fw-bold m-0" style={{ color: 'var(--text-primary)' }}>Auditoría del Sistema</h2>
           <p className="text-muted mb-0">Listado de seguridad: quién, cuándo y qué acción realizó en la tienda</p>
         </div>
-        <button onClick={fetchAuditLogs} className="btn-red py-2 px-3">Refrescar Logs 🔄</button>
+        <div className="d-flex gap-2 align-items-center">
+          <button onClick={() => fetchAuditLogs()} className="btn-red py-2 px-3">Buscar</button>
+          <button onClick={clearFilters} className="btn-outline-red py-2 px-3">Limpiar</button>
+          <button onClick={fetchAuditLogs} className="btn-red py-2 px-3">Refrescar 🔄</button>
+        </div>
+      </div>
+
+      {/* Barra de filtros */}
+      <div className="glass-panel p-3 mb-4">
+        <div className="d-flex flex-wrap gap-3 align-items-center">
+          <input className="form-control" placeholder="Usuario/Email" value={filterUser} onChange={(e) => setFilterUser(e.target.value)} />
+          <input className="form-control" placeholder="Acción (LOGIN, CREATE_PRODUCT...)" value={filterAction} onChange={(e) => setFilterAction(e.target.value)} />
+          <input className="form-control" placeholder="Módulo / Entidad" value={filterEntity} onChange={(e) => setFilterEntity(e.target.value)} />
+          <input className="form-control" type="date" value={filterDateFrom} onChange={(e) => setFilterDateFrom(e.target.value)} />
+          <input className="form-control" type="date" value={filterDateTo} onChange={(e) => setFilterDateTo(e.target.value)} />
+        </div>
       </div>
 
       {loading ? (

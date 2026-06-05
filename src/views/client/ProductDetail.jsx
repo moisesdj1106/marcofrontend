@@ -135,7 +135,7 @@ const ProductDetail = () => {
               <CBadge color="danger" className="badge-badge px-3 py-2 mb-2">
                 {product.category_name}
               </CBadge>
-              <h2 className="text-white display-6 fw-bold">{product.name}</h2>
+              <h2 className="text-black display-6 fw-bold">{product.name}</h2>
             </div>
             
             <p className="text-secondary fs-5" style={{ lineHeight: '1.6' }}>

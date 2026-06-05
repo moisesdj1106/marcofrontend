@@ -22,14 +22,30 @@ const Invoices = () => {
   const { getAuthHeaders } = useAuth();
   const [invoices, setInvoices] = useState([]);
   const [loading, setLoading] = useState(true);
+  // filtros
+  const [filterStatus, setFilterStatus] = useState('');
+  const [filterCustomer, setFilterCustomer] = useState('');
+  const [filterDateFrom, setFilterDateFrom] = useState('');
+  const [filterDateTo, setFilterDateTo] = useState('');
+  const [filterMinTotal, setFilterMinTotal] = useState('');
+  const [filterMaxTotal, setFilterMaxTotal] = useState('');
 
   useEffect(() => {
     fetchInvoices();
   }, []);
 
   const fetchInvoices = async () => {
+    setLoading(true);
     try {
-      const response = await fetch(getApiUrl('/api/orders/all'), {
+      const params = new URLSearchParams();
+      if (filterStatus) params.append('status', filterStatus);
+      if (filterCustomer) params.append('customer', filterCustomer);
+      if (filterDateFrom) params.append('date_from', filterDateFrom);
+      if (filterDateTo) params.append('date_to', filterDateTo);
+      if (filterMinTotal) params.append('min_total', filterMinTotal);
+      if (filterMaxTotal) params.append('max_total', filterMaxTotal);
+
+      const response = await fetch(getApiUrl(`/api/orders/all?${params.toString()}`), {
         headers: getAuthHeaders()
       });
       const data = await response.json();
@@ -41,6 +57,16 @@ const Invoices = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  const clearFilters = () => {
+    setFilterStatus('');
+    setFilterCustomer('');
+    setFilterDateFrom('');
+    setFilterDateTo('');
+    setFilterMinTotal('');
+    setFilterMaxTotal('');
+    fetchInvoices();
   };
 
   const formatCOP = (val) => {
@@ -220,6 +246,24 @@ const Invoices = () => {
 
       <CCard className="glass-panel border-0 p-3">
         <CCardBody>
+          {/* Barra de filtros */}
+          <div className="d-flex flex-wrap gap-2 mb-3 align-items-center">
+            <select className="form-select" value={filterStatus} onChange={(e) => setFilterStatus(e.target.value)} style={{ maxWidth: '180px' }}>
+              <option value="">Todos los estados</option>
+              <option value="completed">COMPLETED</option>
+              <option value="pending">PENDING</option>
+              <option value="rejected">REJECTED</option>
+            </select>
+            <input className="form-control" placeholder="Cliente o email" value={filterCustomer} onChange={(e) => setFilterCustomer(e.target.value)} style={{ maxWidth: '260px' }} />
+            <input className="form-control" type="date" value={filterDateFrom} onChange={(e) => setFilterDateFrom(e.target.value)} />
+            <input className="form-control" type="date" value={filterDateTo} onChange={(e) => setFilterDateTo(e.target.value)} />
+            <input className="form-control" type="number" placeholder="Min Total" value={filterMinTotal} onChange={(e) => setFilterMinTotal(e.target.value)} style={{ maxWidth: '140px' }} />
+            <input className="form-control" type="number" placeholder="Max Total" value={filterMaxTotal} onChange={(e) => setFilterMaxTotal(e.target.value)} style={{ maxWidth: '140px' }} />
+            <div className="ms-auto d-flex gap-2">
+              <CButton color="primary" onClick={fetchInvoices}>Buscar</CButton>
+              <CButton color="secondary" onClick={clearFilters}>Limpiar</CButton>
+            </div>
+          </div>
           <CTable responsive>
             <CTableHead>
               <CTableRow>

@@ -37,6 +37,12 @@ const Inventory = () => {
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
   const { getAuthHeaders } = useAuth();
+  // filtros
+  const [filterName, setFilterName] = useState('');
+  const [filterCategoryId, setFilterCategoryId] = useState('');
+  const [filterStockStatus, setFilterStockStatus] = useState('all'); // all, in, low, out
+  const [filterMinPrice, setFilterMinPrice] = useState('');
+  const [filterMaxPrice, setFilterMaxPrice] = useState('');
 
   // Modales
   const [productModal, setProductModal] = useState(false);
@@ -62,10 +68,25 @@ const Inventory = () => {
   const fetchInventoryData = async () => {
     setLoading(true);
     try {
-      // Cargar productos
-      const prodRes = await fetch(getApiUrl('/api/products'));
+      // Cargar productos con filtros básicos pasados al backend (search & category)
+      const params = new URLSearchParams();
+      if (filterName) params.append('search', filterName);
+      if (filterCategoryId) params.append('categoryId', filterCategoryId);
+      const prodRes = await fetch(getApiUrl(`/api/products?${params.toString()}`));
       const prodData = await prodRes.json();
-      if (prodRes.ok) setProducts(prodData);
+      let finalProducts = prodRes.ok ? prodData : [];
+
+      // Filtrar cliente-side por stock y rango de precio
+      finalProducts = finalProducts.filter(p => {
+        if (filterStockStatus === 'in' && p.stock <= 0) return false;
+        if (filterStockStatus === 'low' && !(p.stock > 0 && p.stock <= 5)) return false;
+        if (filterStockStatus === 'out' && p.stock > 0) return false;
+        if (filterMinPrice && Number(p.price) < Number(filterMinPrice)) return false;
+        if (filterMaxPrice && Number(p.price) > Number(filterMaxPrice)) return false;
+        return true;
+      });
+
+      if (prodRes.ok) setProducts(finalProducts);
 
       // Cargar categorías
       const catRes = await fetch(getApiUrl('/api/products/categories'));
@@ -76,6 +97,19 @@ const Inventory = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  const applyFilters = () => {
+    fetchInventoryData();
+  };
+
+  const clearFilters = () => {
+    setFilterName('');
+    setFilterCategoryId('');
+    setFilterStockStatus('all');
+    setFilterMinPrice('');
+    setFilterMaxPrice('');
+    fetchInventoryData();
   };
 
   // Abrir modal para crear producto
@@ -232,6 +266,31 @@ const Inventory = () => {
           </CButton>
         )}
       </div>
+
+      {/* Barra de filtros para productos */}
+      {activeTab === 'products' && (
+        <div className="glass-panel p-3 mb-4 d-flex flex-wrap gap-2 align-items-center">
+          <input className="form-control" placeholder="Buscar por nombre o descripción" value={filterName} onChange={(e) => setFilterName(e.target.value)} style={{ maxWidth: '280px' }} />
+          <select className="form-select" value={filterCategoryId} onChange={(e) => setFilterCategoryId(e.target.value)} style={{ maxWidth: '220px' }}>
+            <option value="">Todas las Categorías</option>
+            {categories.map(c => (
+              <option key={c.id} value={c.id}>{c.name}</option>
+            ))}
+          </select>
+          <select className="form-select" value={filterStockStatus} onChange={(e) => setFilterStockStatus(e.target.value)} style={{ maxWidth: '160px' }}>
+            <option value="all">Todos</option>
+            <option value="in">En Stock</option>
+            <option value="low">Bajo Stock (&le;5)</option>
+            <option value="out">Agotados</option>
+          </select>
+          <input className="form-control" type="number" placeholder="Min Precio" value={filterMinPrice} onChange={(e) => setFilterMinPrice(e.target.value)} style={{ maxWidth: '140px' }} />
+          <input className="form-control" type="number" placeholder="Max Precio" value={filterMaxPrice} onChange={(e) => setFilterMaxPrice(e.target.value)} style={{ maxWidth: '140px' }} />
+          <div className="ms-auto d-flex gap-2">
+            <CButton onClick={applyFilters} color="primary">Buscar</CButton>
+            <CButton onClick={clearFilters} color="secondary">Limpiar</CButton>
+          </div>
+        </div>
+      )}
 
       {/* Tabs */}
       <CNav variant="tabs" className="mb-4 border-secondary">

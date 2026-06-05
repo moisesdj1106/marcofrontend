@@ -88,6 +88,15 @@
   border-bottom: 1px solid rgba(255,255,255,0.02) !important;
 }
 
+/* Asegurar que las utilidades de texto usen colores del tema oscuro */
+.dark-theme .text-dark {
+  color: var(--text-primary) !important;
+}
+
+.dark-theme .text-secondary {
+  color: var(--text-secondary) !important;
+}
+
 .dark-theme .btn-outline-red {
   background: transparent !important;
   color: var(--accent-orange) !important;

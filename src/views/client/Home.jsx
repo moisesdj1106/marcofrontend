@@ -58,7 +58,7 @@ const Home = () => {
     {
       id: 3,
       title: "Envío Express 24h",
-      subtitle: "Entrega en 24 horas para todo Medellín y área metropolitana",
+      subtitle: "Entrega a nivel nacional",
       image: "/baner2.png",
       buttonText: "Comprar Ahora",
       link: "#productos",

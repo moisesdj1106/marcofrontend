@@ -246,9 +246,9 @@ const AboutUs = () => {
                 }}>
                   <span style={{ fontSize: '2.5rem', color: 'white' }}>📄</span>
                 </div>
-                <h3 className="fw-bold mb-3">Documento de Garantías y Políticas</h3>
+                <h3 className="fw-bold mb-3">Documentación Legal De La Tienda</h3>
                 <p className="text-secondary mb-4">
-                  Consulta nuestro documento oficial con toda la información sobre garantías, políticas de devolución y términos de servicio.
+                  Consulta nuestro documento oficial donde nos constituimos legalmente frente al estado.
                 </p>
                 <CButton 
                   color="primary" 

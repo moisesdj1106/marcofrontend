@@ -221,7 +221,7 @@ const Inventory = () => {
   // Eliminar Categoría (Cascada)
   const handleDeleteCategory = async (id, name) => {
     const doubleCheck = window.confirm(
-      `⚠️ ¡ADVERTENCIA DE CASCADA! ⚠️\n\n¿Estás seguro de eliminar la categoría "${name}"?\nEsta acción eliminará TODOS los repuestos pertenecientes a esta categoría de forma permanente.`
+      ` ¡ADVERTENCIA DE CASCADA! \n\n¿Estás seguro de eliminar la categoría "${name}"?\nEsta acción eliminará TODOS los repuestos pertenecientes a esta categoría de forma permanente.`
     );
     if (!doubleCheck) return;
 

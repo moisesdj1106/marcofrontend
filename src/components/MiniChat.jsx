@@ -169,14 +169,14 @@ export default function MiniChat({ initialOpen = true }) {
   }
 
   if (closed) {
-+    return (
-+      <div className="minichat-launcher" onClick={() => { setClosed(false); setOpen(true); }} title="Abrir asistente">Asistente</div>
-+    );
-+  }
-+
-+  return (
-+    <div className={`minichat ${open ? 'open' : ''}`}>
-+      <div className="minichat-header">
+    return (
+      <div className="minichat-launcher" onClick={() => { setClosed(false); setOpen(true); }} title="Abrir asistente">Asistente</div>
+    );
+  }
+
+  return (
+    <div className={`minichat ${open ? 'open' : ''}`}>
+      <div className="minichat-header">
         <div className="minichat-title" onClick={() => setOpen(!open)}>Asistente de la Tienda</div>
         <div style={{display:'flex', gap:8, alignItems:'center'}}>
           <button className="minichat-help-btn" title="Qué puedo hacer" onClick={() => setShowHelp(s => !s)}>?</button>

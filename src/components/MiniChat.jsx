@@ -34,6 +34,18 @@ export default function MiniChat({ initialOpen = true }) {
     }
   }, []);
 
+  // Escuchar evento de limpieza cuando el usuario hace logout
+  useEffect(() => {
+    const handler = () => {
+      try {
+        setMessages([]);
+        localStorage.removeItem('miniChatMessages');
+      } catch (e) {}
+    };
+    window.addEventListener('miniChatClear', handler);
+    return () => window.removeEventListener('miniChatClear', handler);
+  }, []);
+
   const [showHelp, setShowHelp] = useState(false);
 
   function parseOrderMessage(text) {
@@ -162,6 +174,7 @@ export default function MiniChat({ initialOpen = true }) {
         <div style={{display:'flex', gap:8, alignItems:'center'}}>
           <button className="minichat-help-btn" title="Qué puedo hacer" onClick={() => setShowHelp(s => !s)}>?</button>
           <div className="minichat-toggle" onClick={() => setOpen(!open)}>{open ? '—' : '+'}</div>
+          <button className="minichat-close-btn" title="Cerrar" onClick={() => setOpen(false)}>×</button>
         </div>
       </div>
 

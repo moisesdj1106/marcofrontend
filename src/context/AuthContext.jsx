@@ -62,6 +62,14 @@ export const AuthProvider = ({ children }) => {
     setToken('');
     setUser(null);
     localStorage.removeItem('token');
+    // Limpiar historial del mini chat al cerrar sesión
+    try {
+      localStorage.removeItem('miniChatMessages');
+      // Emitir evento para componentes que deban reaccionar inmediatamente
+      window.dispatchEvent(new Event('miniChatClear'));
+    } catch (e) {
+      console.warn('No se pudo limpiar miniChatMessages', e);
+    }
   };
 
   // Helper para generar cabeceras de peticiones autenticadas

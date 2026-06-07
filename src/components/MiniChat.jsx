@@ -31,7 +31,7 @@ export default function MiniChat({ initialOpen = true }) {
     // Mensaje de bienvenida con instrucciones claras
     // Añadir mensaje de bienvenida sólo si no hay historial previo
     if (!messages || messages.length === 0) {
-      addMessage('bot', 'Hola 👋 Soy el asistente de la tienda. Puedo: listar productos, buscar por nombre, consultar stock, crear órdenes, reservar, guardar borradores y más.\nSi eres administrador, también puedes preguntar por ventas, ingresos y rendimiento.\nPulsa "?" arriba para ver todo lo que puedo hacer y ejemplos.\nEjemplos rápidos: "Productos disponibles", "Stock bujía ngk", "Comprar 2 Bujía NGK"');
+      addMessage('bot', 'Hola 👋 Soy el asistente virtual de la tienda. Puedo realizar las siguientes tareas: listar productos, buscar por nombre, consultar stock, crear órdenes, reservar, guardar borradores y más.\nSi eres administrador, también puedes preguntar por ventas, ingresos y rendimiento.\nPulsa "?" arriba para ver todo lo que puedo hacer y ejemplos.\nEjemplos rápidos: "Productos disponibles", "Stock bujía ngk", "Comprar 2 Bujía NGK"');
     }
   }, []);
 
@@ -203,7 +203,7 @@ export default function MiniChat({ initialOpen = true }) {
   return (
     <div className={`minichat ${open ? 'open' : ''}`}>
       <div className="minichat-header">
-        <div className="minichat-title" onClick={() => setOpen(!open)}>Asistente de la Tienda</div>
+        <div className="minichat-title" onClick={() => setOpen(!open)}>AGENTE VIRTUAL</div>
         <div style={{display:'flex', gap:8, alignItems:'center'}}>
           <button className="minichat-help-btn" title="Qué puedo hacer" onClick={() => setShowHelp(s => !s)}>?</button>
           <div className="minichat-toggle" onClick={() => setOpen(!open)}>{open ? '—' : '+'}</div>
@@ -225,7 +225,6 @@ export default function MiniChat({ initialOpen = true }) {
                 <li><b>Reservar/apartar:</b> "Reservar 2 Bujía NGK por 24 horas"</li>
                 <li><b>Guardar borrador/presupuesto:</b> "Guardar presupuesto: 2 Bujía NGK"</li>
                 <li><b>Historial personal:</b> "Mis pedidos", "Ver historial"</li>
-                <li><b>Solicitar factura:</b> "Factura orden 123", "Factura ORD-123"</li>
                 <li><b>Preguntas de administrador:</b> "¿Cuánto se generó hoy?", "Ventas de ayer", "Ingresos de hoy"</li>
                 <li><b>Consultas de empresa:</b> "Misión", "Visión", "Ubicación"</li>
                 <li><b>Ayuda general:</b> "Ayuda", "¿Qué puedes hacer?"</li>

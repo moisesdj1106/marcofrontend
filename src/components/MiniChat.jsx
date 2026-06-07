@@ -14,6 +14,7 @@ export default function MiniChat({ initialOpen = true }) {
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
   const bottomRef = useRef(null);
+  const inputRef = useRef(null);
   const { addToCart } = useCart();
 
   useEffect(() => {
@@ -29,9 +30,11 @@ export default function MiniChat({ initialOpen = true }) {
     // Mensaje de bienvenida con instrucciones claras
     // Añadir mensaje de bienvenida sólo si no hay historial previo
     if (!messages || messages.length === 0) {
-      addMessage('bot', 'Hola 👋 Soy el asistente de la tienda. Puedo: listar productos disponibles, buscar por nombre, consultar stock, y crear órdenes.\nEjemplos:\n• "Productos disponibles"\n• "Stock bujía ngk"\n• "Comprar 2 Bujía NGK, 1 Batería Yuasa"\nSi vas a crear una orden, simplemente escribe "Comprar" seguido de las cantidades y nombres. Yo me encargo de buscar los productos y completar la orden si estás autenticado.');
+      addMessage('bot', 'Hola 👋 Soy el asistente de la tienda. Puedo: listar productos, buscar por nombre, consultar stock, crear órdenes, reservar, guardar borradores y más.\nPulsa "?" arriba para ver todo lo que puedo hacer y ejemplos.\nEjemplos rápidos: "Productos disponibles", "Stock bujía ngk", "Comprar 2 Bujía NGK"');
     }
   }, []);
+
+  const [showHelp, setShowHelp] = useState(false);
 
   function parseOrderMessage(text) {
     const lower = text.toLowerCase();
@@ -154,13 +157,38 @@ export default function MiniChat({ initialOpen = true }) {
 
   return (
     <div className={`minichat ${open ? 'open' : ''}`}>
-      <div className="minichat-header" onClick={() => setOpen(!open)}>
-        <div className="minichat-title">Asistente de la Tienda</div>
-        <div className="minichat-toggle">{open ? '—' : '+'}</div>
+      <div className="minichat-header">
+        <div className="minichat-title" onClick={() => setOpen(!open)}>Asistente de la Tienda</div>
+        <div style={{display:'flex', gap:8, alignItems:'center'}}>
+          <button className="minichat-help-btn" title="Qué puedo hacer" onClick={() => setShowHelp(s => !s)}>?</button>
+          <div className="minichat-toggle" onClick={() => setOpen(!open)}>{open ? '—' : '+'}</div>
+        </div>
       </div>
 
       {open && (
         <div className="minichat-body">
+          {showHelp && (
+            <div className="minichat-help">
+              <div className="help-title">Qué puedo hacer — ejemplos</div>
+              <ul className="help-list">
+                <li><b>Listar productos:</b> "Productos disponibles", "Mostrar productos de frenos"</li>
+                <li><b>Buscar por nombre:</b> "Buscar bujía ngk", "¿Tienen batería Yuasa 12V?"</li>
+                <li><b>Consultar stock:</b> "Stock bujía ngk", "¿Hay pastillas delanteras?"</li>
+                <li><b>Comprar (por nombre):</b> "Comprar 2 Bujía NGK, 1 Batería Yuasa"</li>
+                <li><b>Reservar/apartar:</b> "Reservar 2 Bujía NGK por 24 horas"</li>
+                <li><b>Guardar borrador/presupuesto:</b> "Guardar presupuesto: 2 Bujía NGK"</li>
+                <li><b>Historial personal:</b> "Mis pedidos", "Ver historial"</li>
+                <li><b>Solicitar factura:</b> "Solicitar factura para pedido 12345"</li>
+                <li><b>Consultas de empresa:</b> "Misión", "Visión", "Ubicación"</li>
+                <li><b>Ayuda general:</b> "Ayuda", "¿Qué puedes hacer?"</li>
+              </ul>
+              <div className="help-examples">Ejemplos rápidos:
+                {['Productos disponibles','Stock bujía ngk','Comprar 2 Bujía NGK','Reservar 1 Pastillas'].map((ex,i)=> (
+                  <button key={i} className="help-chip" onClick={() => { setInput(ex); inputRef.current?.focus(); }}>{ex}</button>
+                ))}
+              </div>
+            </div>
+          )}
           <div className="minichat-messages">
             {messages.map(msg => (
               <div key={msg.id} className={`minichat-message ${msg.from}`}>
@@ -171,7 +199,7 @@ export default function MiniChat({ initialOpen = true }) {
           </div>
 
           <div className="minichat-input-row">
-            <input value={input} onChange={e=>setInput(e.target.value)} onKeyDown={e=>{ if(e.key==='Enter') send(); }} placeholder="Escribe tu pregunta o comando..." />
+            <input ref={inputRef} value={input} onChange={e=>setInput(e.target.value)} onKeyDown={e=>{ if(e.key==='Enter') send(); }} placeholder="Escribe tu pregunta o comando..." />
             <button onClick={send} disabled={loading}>{loading ? '...' : 'Enviar'}</button>
           </div>
         </div>

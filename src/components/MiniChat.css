@@ -55,3 +55,11 @@
   from { transform: translateY(6px); opacity: 0 }
   to { transform: translateY(0); opacity: 1 }
 }
+
+/* Help panel */
+.minichat-help{background:#f8fafb; border-top:1px solid #eef2f2; padding:12px; max-height:220px; overflow:auto}
+.minichat-help .help-title{font-weight:700; margin-bottom:8px}
+.minichat-help .help-list{list-style:disc; padding-left:18px; margin:0 0 8px 0}
+.help-examples{display:flex; gap:8px; flex-wrap:wrap}
+.help-chip{background:#eef7f7; border:1px solid #d7eeed; padding:6px 8px; border-radius:8px; cursor:pointer; font-size:13px}
+.minichat-help-btn{background:transparent; border:1px solid #d1d5db; border-radius:50%; width:28px; height:28px; cursor:pointer}

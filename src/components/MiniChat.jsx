@@ -56,6 +56,11 @@ export default function MiniChat({ initialOpen = true }) {
     const parts = after.split(/,| y |;|\band\b/).map(p => p.trim()).filter(Boolean);
     const items = [];
     for (const part of parts) {
+      const idMatch = part.match(/(?:producto|marca|opci[oó]n|item|art[ií]culo)\s*#?\s*(\d+)\b/i);
+      if (idMatch) {
+        items.push({ product_id: parseInt(idMatch[1], 10), quantity: 1 });
+        continue;
+      }
       const m = part.match(/(\d+)\s+(.+)/); // '2 bujía ngk'
       if (m) {
         items.push({ name: m[2].trim(), quantity: parseInt(m[1], 10) });
@@ -143,6 +148,17 @@ export default function MiniChat({ initialOpen = true }) {
         addMessage('bot', `🔒 ${data.message} — Reserva ID: ${data.reservationId} — Expira: ${data.expiresAt}\n${itemsText}\nHe agregado los artículos reservados a tu carrito.`);
       } else if (data.type === 'admin_stats') {
         addMessage('bot', `📊 Hoy: ${formatBs(data.today.total)} (${data.today.orders} órdenes)\nAyer: ${formatBs(data.previous.total)} (${data.previous.orders} órdenes)\nMejora: ${data.improvement ?? 'N/D'}%`);
+      } else if (data.type === 'my_orders') {
+        if (!data.orders || data.orders.length === 0) {
+          addMessage('bot', 'No tienes pedidos registrados en el historial.');
+        } else {
+          const ordersText = data.orders.map((order) => {
+            const date = new Date(order.created_at).toLocaleString('es-VE');
+            const items = (order.items || []).map((item) => `    • ${item.product_name} x${item.quantity}`).join('\n');
+            return `Pedido ${order.id} — ${order.status} — ${formatBs(order.total_amount)}\nFecha: ${date}\nProductos:\n${items}`;
+          }).join('\n\n');
+          addMessage('bot', `Aquí está tu historial de pedidos:\n\n${ordersText}`);
+        }
       } else if (data.type === 'text') {
         const content = data.content || JSON.stringify(data);
         // Si el backend devuelve SQL para crear company_info, mostrarlo en bloque
@@ -195,6 +211,7 @@ export default function MiniChat({ initialOpen = true }) {
                 <li><b>Buscar por nombre:</b> "Buscar bujía ngk", "¿Tienen batería Yuasa 12V?"</li>
                 <li><b>Consultar stock:</b> "Stock bujía ngk", "¿Hay pastillas delanteras?"</li>
                 <li><b>Comprar (por nombre):</b> "Comprar 2 Bujía NGK, 1 Batería Yuasa"</li>
+                <li><b>Comprar por número:</b> "Comprar producto 1", "Comprar marca 2"</li>
                 <li><b>Reservar/apartar:</b> "Reservar 2 Bujía NGK por 24 horas"</li>
                 <li><b>Guardar borrador/presupuesto:</b> "Guardar presupuesto: 2 Bujía NGK"</li>
                 <li><b>Historial personal:</b> "Mis pedidos", "Ver historial"</li>

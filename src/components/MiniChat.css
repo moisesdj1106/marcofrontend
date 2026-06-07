@@ -67,5 +67,5 @@
 .minichat-close-btn:hover{background:#ef4444}
 
 /* Launcher cuando el chat está cerrado completamente */
-.minichat-launcher{position:fixed; right:18px; bottom:18px; z-index:9999; background:#0ea5a3; color:white; padding:10px 14px; border-radius:28px; box-shadow:0 6px 18px rgba(2,6,23,0.12); cursor:pointer; font-weight:600}
+.minichat-launcher{position:fixed; right:18px; bottom:90px; z-index:9999; background:#0ea5a3; color:white; padding:10px 14px; border-radius:28px; box-shadow:0 6px 18px rgba(2,6,23,0.12); cursor:pointer; font-weight:600}
 .minichat-launcher:hover{transform:translateY(-2px)}

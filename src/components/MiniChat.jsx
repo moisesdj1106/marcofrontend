@@ -31,7 +31,7 @@ export default function MiniChat({ initialOpen = true }) {
     // Mensaje de bienvenida con instrucciones claras
     // Añadir mensaje de bienvenida sólo si no hay historial previo
     if (!messages || messages.length === 0) {
-      addMessage('bot', 'Hola 👋 Soy el asistente de la tienda. Puedo: listar productos, buscar por nombre, consultar stock, crear órdenes, reservar, guardar borradores y más.\nPulsa "?" arriba para ver todo lo que puedo hacer y ejemplos.\nEjemplos rápidos: "Productos disponibles", "Stock bujía ngk", "Comprar 2 Bujía NGK"');
+      addMessage('bot', 'Hola 👋 Soy el asistente de la tienda. Puedo: listar productos, buscar por nombre, consultar stock, crear órdenes, reservar, guardar borradores y más.\nSi eres administrador, también puedes preguntar por ventas, ingresos y rendimiento.\nPulsa "?" arriba para ver todo lo que puedo hacer y ejemplos.\nEjemplos rápidos: "Productos disponibles", "Stock bujía ngk", "Comprar 2 Bujía NGK"');
     }
   }, []);
 
@@ -226,11 +226,12 @@ export default function MiniChat({ initialOpen = true }) {
                 <li><b>Guardar borrador/presupuesto:</b> "Guardar presupuesto: 2 Bujía NGK"</li>
                 <li><b>Historial personal:</b> "Mis pedidos", "Ver historial"</li>
                 <li><b>Solicitar factura:</b> "Factura orden 123", "Factura ORD-123"</li>
+                <li><b>Preguntas de administrador:</b> "¿Cuánto se generó hoy?", "Ventas de ayer", "Ingresos de hoy"</li>
                 <li><b>Consultas de empresa:</b> "Misión", "Visión", "Ubicación"</li>
                 <li><b>Ayuda general:</b> "Ayuda", "¿Qué puedes hacer?"</li>
               </ul>
               <div className="help-examples">Ejemplos rápidos:
-                {['Productos disponibles','Stock bujía ngk','Comprar 2 Bujía NGK','Reservar 1 Pastillas'].map((ex,i)=> (
+                {['Productos disponibles','Stock bujía ngk','Comprar 2 Bujía NGK','Reservar 1 Pastillas','Ventas de hoy','Cuánto se generó ayer'].map((ex,i)=> (
                   <button key={i} className="help-chip" onClick={() => { setInput(ex); inputRef.current?.focus(); }}>{ex}</button>
                 ))}
               </div>

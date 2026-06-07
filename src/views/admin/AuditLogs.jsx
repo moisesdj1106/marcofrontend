@@ -137,7 +137,7 @@ const AuditLogs = () => {
         <div className="d-flex gap-2 align-items-center">
           <button onClick={() => fetchAuditLogs()} className="btn-red py-2 px-3">Buscar</button>
           <button onClick={clearFilters} className="btn-outline-red py-2 px-3">Limpiar</button>
-          <button onClick={fetchAuditLogs} className="btn-red py-2 px-3">Refrescar 🔄</button>
+          <button onClick={fetchAuditLogs} className="btn-red py-2 px-3">Refrescar </button>
         </div>
       </div>
 

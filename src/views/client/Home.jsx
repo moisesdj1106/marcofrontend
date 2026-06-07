@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { useCart } from '../../context/CartContext';
 import { API_URL } from '../../utils/api';
 import { getProductImage } from '../../utils/imageHelper';
+import MiniChat from '../../components/MiniChat';
 import { 
   CContainer, 
   CRow, 
@@ -783,6 +784,7 @@ const Home = () => {
           </CRow>
         </CContainer>
       </section>
+      <MiniChat />
     </div>
   );
 };

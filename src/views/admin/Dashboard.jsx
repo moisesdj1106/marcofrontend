@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { getApiUrl } from '../../utils/api';
+import MiniChat from '../../components/MiniChat';
 import { 
   CContainer, 
   CRow, 
@@ -251,6 +252,7 @@ const Dashboard = () => {
           </div>
         </CCol>
       </CRow>
+        <MiniChat />
     </CContainer>
   );
 };

@@ -1,0 +1,34 @@
+.minichat {
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+  width: 320px;
+  font-family: Inter, system-ui, Arial, sans-serif;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+  border-radius: 12px;
+  overflow: hidden;
+  z-index: 9999;
+}
+.minichat-header{
+  background: linear-gradient(90deg,#0ea5a3,#06b6d4);
+  color: white;
+  padding: 12px 14px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  cursor:pointer;
+}
+.minichat-title{font-weight:600}
+.minichat-body{background:white; max-height:420px; display:flex; flex-direction:column}
+.minichat-messages{padding:12px; overflow:auto; flex:1}
+.minichat-message{margin-bottom:10px; max-width:85%}
+.minichat-message.user{align-self:flex-end; text-align:right}
+.minichat-message.bot{align-self:flex-start}
+.minichat-message-content{background:#f3f4f6; padding:8px 10px; border-radius:10px}
+.minichat-message.user .minichat-message-content{background:#06b6d4; color:white}
+.minichat-input-row{display:flex; gap:8px; padding:10px; border-top:1px solid #eee}
+.minichat-input-row input{flex:1; padding:8px 10px; border-radius:8px; border:1px solid #ddd}
+.minichat-input-row button{background:#0ea5a3; color:white; border:none; padding:8px 12px; border-radius:8px; cursor:pointer}
+
+.minichat:not(.open){width:160px}
+.minichat:not(.open) .minichat-body{display:none}

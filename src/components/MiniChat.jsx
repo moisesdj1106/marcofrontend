@@ -81,6 +81,17 @@ export default function MiniChat({ initialOpen = true }) {
     setMessages((m) => [...m, { from, content, id: Date.now() + Math.random() }]);
   }
 
+  function clearConversation() {
+    try {
+      const ok = window.confirm('¿Deseas eliminar la conversación con el asistente?');
+      if (!ok) return;
+      setMessages([]);
+      localStorage.removeItem('miniChatMessages');
+      // Mensaje de confirmación limpio
+      setTimeout(() => addMessage('bot', 'Conversación eliminada. ¿En qué más puedo ayudarte?'), 50);
+    } catch (e) {}
+  }
+
   async function send() {
     if (!input.trim()) return;
     const text = input.trim();
@@ -104,15 +115,25 @@ export default function MiniChat({ initialOpen = true }) {
       if (data.type === 'list') {
         const listHtml = data.items.map(it => `• ${it.name} — ${formatBs(it.price)} — stock: ${it.stock}`).join('\n');
         addMessage('bot', `${data.title}\n${listHtml}`);
+        const outOfStock = (data.items || []).filter(it => (it.stock || 0) <= 0).map(it => it.name);
+        if (outOfStock.length > 0) addMessage('bot', `⚠️ Los siguientes artículos están sin stock: ${outOfStock.join(', ')}`);
       } else if (data.type === 'product') {
         const p = data.product;
         addMessage('bot', `${p.name} — ${formatBs(p.price)}\nStock: ${p.stock}\n${p.description || ''}`);
+        if ((p.stock || 0) <= 0) {
+          addMessage('bot', `Lo siento, actualmente no hay stock disponible de "${p.name}".`);
+        }
       } else if (data.type === 'stock') {
         addMessage('bot', `${data.product.name} — Stock: ${data.product.stock}`);
       } else if (data.type === 'order') {
         // Añadir items al carrito local para continuar el flujo de compra
         const items = data.items || [];
+        const skipped = [];
         for (const it of items) {
+          if ((it.stock || 0) <= 0) {
+            skipped.push(it.name || `ID ${it.product_id}`);
+            continue;
+          }
           // Construir objeto de producto esperable por addToCart
           const productObj = {
             id: it.product_id,
@@ -121,31 +142,36 @@ export default function MiniChat({ initialOpen = true }) {
             stock: it.stock || 0,
             image_url: it.image_url || ''
           };
-          try {
-            addToCart(productObj, it.quantity);
-          } catch (e) {
-            // ignorar errores locales
-          }
+          try { addToCart(productObj, it.quantity); } catch (e) {}
         }
         const itemsText = items.map(i=> `• ${i.name} x${i.quantity}`).join('\n');
         addMessage('bot', `✅ ${data.message} — Orden ID: ${data.orderId} — Total: ${formatBs(data.total)}\n${itemsText}\nHe agregado estos artículos a tu carrito para que continúes con el flujo de compra.`);
+        if (skipped.length > 0) {
+          addMessage('bot', `⚠️ No se pudieron agregar al carrito los siguientes artículos por falta de stock: ${skipped.join(', ')}`);
+        }
       } else if (data.type === 'draft') {
         // draft guardado: agregar al carrito para revisión
         const items = data.items || [];
+        const skipped = [];
         for (const it of items) {
+          if ((it.stock || 0) <= 0) { skipped.push(it.name || `ID ${it.product_id}`); continue; }
           const productObj = { id: it.product_id, name: it.name, price: it.unit_price, stock: it.stock || 0, image_url: it.image_url || '' };
           try { addToCart(productObj, it.quantity); } catch (e) {}
         }
         const itemsText = items.map(i=> `• ${i.name} x${i.quantity}`).join('\n');
         addMessage('bot', `📝 ${data.message} — Borrador ID: ${data.orderId} — Total: ${formatBs(data.total)}\n${itemsText}\nHe agregado estos artículos a tu carrito para que los revises.`);
+        if (skipped.length > 0) addMessage('bot', `⚠️ Los siguientes artículos no están en stock y no se agregaron: ${skipped.join(', ')}`);
       } else if (data.type === 'reservation') {
         const items = data.items || [];
+        const skipped = [];
         for (const it of items) {
+          if ((it.stock || 0) <= 0) { skipped.push(it.name || `ID ${it.product_id}`); continue; }
           const productObj = { id: it.product_id, name: it.name, price: it.unit_price, stock: it.stock || 0, image_url: it.image_url || '' };
           try { addToCart(productObj, it.quantity); } catch (e) {}
         }
         const itemsText = items.map(i=> `• ${i.name} x${i.quantity}`).join('\n');
         addMessage('bot', `🔒 ${data.message} — Reserva ID: ${data.reservationId} — Expira: ${data.expiresAt}\n${itemsText}\nHe agregado los artículos reservados a tu carrito.`);
+        if (skipped.length > 0) addMessage('bot', `⚠️ No fue posible reservar estos artículos por falta de stock: ${skipped.join(', ')}`);
       } else if (data.type === 'invoice') {
         // Manejo de solicitud de factura
         const orderId = data.orderId;
@@ -205,7 +231,8 @@ export default function MiniChat({ initialOpen = true }) {
       <div className="minichat-header">
         <div className="minichat-title" onClick={() => setOpen(!open)}>AGENTE VIRTUAL</div>
         <div style={{display:'flex', gap:8, alignItems:'center'}}>
-          <button className="minichat-help-btn" title="Qué puedo hacer" onClick={() => setShowHelp(s => !s)}>?</button>
+            <button className="minichat-help-btn" title="Qué puedo hacer" onClick={() => setShowHelp(s => !s)}>?</button>
+            <button className="minichat-clear-btn" title="Borrar conversación" onClick={clearConversation}>🗑</button>
           <div className="minichat-toggle" onClick={() => setOpen(!open)}>{open ? '—' : '+'}</div>
           <button className="minichat-close-btn" title="Cerrar" onClick={() => setClosed(true)}>×</button>
         </div>

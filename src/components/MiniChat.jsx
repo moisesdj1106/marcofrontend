@@ -31,7 +31,7 @@ export default function MiniChat({ initialOpen = true }) {
     // Mensaje de bienvenida con instrucciones claras
     // Añadir mensaje de bienvenida sólo si no hay historial previo
     if (!messages || messages.length === 0) {
-      addMessage('bot', 'Hola 👋 Soy el asistente virtual de la tienda. Puedo realizar las siguientes tareas: listar productos, buscar por nombre, consultar stock, crear órdenes, reservar, guardar borradores y más.\nSi eres administrador, también puedes preguntar por ventas, ingresos y rendimiento.\nPulsa "?" arriba para ver todo lo que puedo hacer y ejemplos.\nEjemplos rápidos: "Productos disponibles", "Stock bujía ngk", "Comprar 2 Bujía NGK"');
+      addMessage('bot', 'Hola 👋 Soy el asistente virtual de la tienda. Puedo listar productos, buscar por nombre, consultar stock, crear órdenes, reservar y más.\nIMPORTANTE: Cuando solicites "stock", indícame el nombre del repuesto o su ID (por ejemplo: "Stock bujía ngk" o "Stock 2").\nSi pides "Productos disponibles" te mostraré ID, nombre, precio y stock.\nSi eres administrador, también puedes preguntar por ventas e ingresos.\nPulsa "?" arriba para ver más ejemplos y formatos.');
     }
   }, []);
 
@@ -246,7 +246,7 @@ export default function MiniChat({ initialOpen = true }) {
               <ul className="help-list">
                 <li><b>Listar productos:</b> "Productos disponibles", "Mostrar productos de frenos"</li>
                 <li><b>Buscar por nombre:</b> "Buscar bujía ngk", "¿Tienen batería Yuasa 12V?"</li>
-                <li><b>Consultar stock:</b> "Stock bujía ngk", "¿Hay pastillas delanteras?"</li>
+                <li><b>Consultar stock:</b> "Stock bujía ngk" o "Stock 2" — Responderé con el ID, nombre y cantidad disponible.</li>
                 <li><b>Comprar (por nombre):</b> "Comprar 2 Bujía NGK, 1 Batería Yuasa"</li>
                 <li><b>Comprar por número:</b> "Comprar producto 1", "Comprar marca 2"</li>
                 <li><b>Reservar/apartar:</b> "Reservar 2 Bujía NGK por 24 horas"</li>
@@ -257,7 +257,7 @@ export default function MiniChat({ initialOpen = true }) {
                 <li><b>Ayuda general:</b> "Ayuda", "¿Qué puedes hacer?"</li>
               </ul>
               <div className="help-examples">Ejemplos rápidos:
-                {['Productos disponibles','Stock bujía ngk','Comprar 2 Bujía NGK','Reservar 1 Pastillas','Ventas de hoy','Cuánto se generó ayer'].map((ex,i)=> (
+                {['Productos disponibles','Stock bujía ngk','Stock 2','Comprar 2 Bujía NGK','Reservar 1 Pastillas','Ventas de hoy','Cuánto se generó ayer'].map((ex,i)=> (
                   <button key={i} className="help-chip" onClick={() => { setInput(ex); inputRef.current?.focus(); }}>{ex}</button>
                 ))}
               </div>

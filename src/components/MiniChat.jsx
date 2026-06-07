@@ -154,8 +154,9 @@ export default function MiniChat({ initialOpen = true }) {
         } else {
           const ordersText = data.orders.map((order) => {
             const date = new Date(order.created_at).toLocaleString('es-VE');
+            const invoiceLine = order.invoice_id ? `Factura: INV-${order.invoice_id}\n` : '';
             const items = (order.items || []).map((item) => `    • ${item.product_name} x${item.quantity}`).join('\n');
-            return `Pedido ${order.id} — ${order.status} — ${formatBs(order.total_amount)}\nFecha: ${date}\nProductos:\n${items}`;
+            return `Pedido ORD-${order.id} — ${order.status} — ${formatBs(order.total_amount)}\n${invoiceLine}Fecha: ${date}\nProductos:\n${items}`;
           }).join('\n\n');
           addMessage('bot', `Aquí está tu historial de pedidos:\n\n${ordersText}`);
         }
@@ -215,7 +216,7 @@ export default function MiniChat({ initialOpen = true }) {
                 <li><b>Reservar/apartar:</b> "Reservar 2 Bujía NGK por 24 horas"</li>
                 <li><b>Guardar borrador/presupuesto:</b> "Guardar presupuesto: 2 Bujía NGK"</li>
                 <li><b>Historial personal:</b> "Mis pedidos", "Ver historial"</li>
-                <li><b>Solicitar factura:</b> "Solicitar factura para pedido 12345"</li>
+                <li><b>Solicitar factura:</b> "Factura orden 123", "Factura ORD-123"</li>
                 <li><b>Consultas de empresa:</b> "Misión", "Visión", "Ubicación"</li>
                 <li><b>Ayuda general:</b> "Ayuda", "¿Qué puedes hacer?"</li>
               </ul>

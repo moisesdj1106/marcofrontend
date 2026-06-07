@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import './MiniChat.css';
 import { getApiUrl } from '../utils/api';
 import { useCart } from '../context/CartContext';
+import { useModal } from '../context/ModalContext';
 
 export default function MiniChat({ initialOpen = true }) {
   const [open, setOpen] = useState(initialOpen);
@@ -16,6 +17,7 @@ export default function MiniChat({ initialOpen = true }) {
   const bottomRef = useRef(null);
   const inputRef = useRef(null);
   const { addToCart } = useCart();
+  const { showConfirm } = useModal();
   const [closed, setClosed] = useState(false);
 
   useEffect(() => {
@@ -81,9 +83,9 @@ export default function MiniChat({ initialOpen = true }) {
     setMessages((m) => [...m, { from, content, id: Date.now() + Math.random() }]);
   }
 
-  function clearConversation() {
+  async function clearConversation() {
     try {
-      const ok = window.confirm('¿Deseas eliminar la conversación con el asistente?');
+      const ok = await showConfirm('¿Deseas eliminar la conversación con el asistente?', 'Confirmar');
       if (!ok) return;
       setMessages([]);
       localStorage.removeItem('miniChatMessages');

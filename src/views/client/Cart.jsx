@@ -2,6 +2,7 @@ import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useCart } from '../../context/CartContext';
 import { useAuth } from '../../context/AuthContext';
+import { useModal } from '../../context/ModalContext';
 import { 
   CContainer, 
   CRow, 
@@ -33,9 +34,11 @@ const Cart = () => {
     }).format(val);
   };
 
-  const handleCheckout = () => {
+  const { showAlert } = useModal();
+
+  const handleCheckout = async () => {
     if (!isAuthenticated) {
-      alert('Debes iniciar sesión para finalizar tu compra.');
+      await showAlert('Debes iniciar sesión para finalizar tu compra.');
       navigate('/login?redirect=checkout');
     } else {
       navigate('/checkout');

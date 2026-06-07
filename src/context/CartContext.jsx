@@ -1,4 +1,5 @@
 import React, { createContext, useState, useEffect, useContext } from 'react';
+import { useModal } from './ModalContext';
 
 const CartContext = createContext();
 
@@ -16,6 +17,8 @@ export const CartProvider = ({ children }) => {
   }, [cartItems]);
 
   // Añadir al carrito
+  const { showAlert } = useModal();
+
   const addToCart = (product, quantity = 1) => {
     setCartItems((prevItems) => {
       const existingItem = prevItems.find((item) => item.id === product.id);
@@ -24,7 +27,7 @@ export const CartProvider = ({ children }) => {
         // Validar que no se exceda el stock
         const newQty = existingItem.quantity + quantity;
         if (newQty > product.stock) {
-          alert(`No puedes agregar más. El stock máximo disponible es ${product.stock}`);
+          showAlert(`No puedes agregar más. El stock máximo disponible es ${product.stock}`);
           return prevItems;
         }
         return prevItems.map((item) =>
@@ -34,7 +37,7 @@ export const CartProvider = ({ children }) => {
 
       // Validar si la cantidad inicial no supera el stock
       if (quantity > product.stock) {
-        alert(`No hay suficiente stock. Disponible: ${product.stock}`);
+        showAlert(`No hay suficiente stock. Disponible: ${product.stock}`);
         return prevItems;
       }
 
@@ -55,7 +58,7 @@ export const CartProvider = ({ children }) => {
     }
 
     if (newQuantity > maxStock) {
-      alert(`No puedes exceder el stock disponible (${maxStock} unidades).`);
+      showAlert(`No puedes exceder el stock disponible (${maxStock} unidades).`);
       return;
     }
 

@@ -4,6 +4,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 // Contextos
 import { AuthProvider } from './context/AuthContext';
 import { CartProvider } from './context/CartContext';
+import { ModalProvider } from './context/ModalContext';
 
 // Componentes
 import Navbar from './components/Navbar';
@@ -32,8 +33,9 @@ import Invoices from './views/admin/Invoices';
 function App() {
   return (
     <AuthProvider>
-      <CartProvider>
-        <Router>
+      <ModalProvider>
+        <CartProvider>
+          <Router>
           <div className="d-flex flex-column min-vh-100">
             <Navbar />
             
@@ -107,8 +109,9 @@ function App() {
             <Footer />
             <MiniChat />
           </div>
-        </Router>
-      </CartProvider>
+          </Router>
+        </CartProvider>
+      </ModalProvider>
     </AuthProvider>
   );
 }

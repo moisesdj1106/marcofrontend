@@ -29,6 +29,7 @@ import {
   CAlert
 } from '@coreui/react';
 import { CIcon } from '@coreui/icons-react';
+import { useModal } from '../../context/ModalContext';
 import { cilPlus, cilPencil, cilTrash, cilWarning } from '@coreui/icons';
 
 const Inventory = () => {
@@ -37,6 +38,7 @@ const Inventory = () => {
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
   const { getAuthHeaders } = useAuth();
+  const { showAlert, showConfirm } = useModal();
   // filtros
   const [filterName, setFilterName] = useState('');
   const [filterCategoryId, setFilterCategoryId] = useState('');
@@ -161,20 +163,21 @@ const Inventory = () => {
       });
       const data = await res.json();
       if (res.ok) {
-        alert(data.message);
+        await showAlert(data.message);
         setProductModal(false);
         fetchInventoryData();
       } else {
-        alert(`Error: ${data.error}`);
+        await showAlert(`Error: ${data.error}`);
       }
     } catch (err) {
-      alert('Error en la conexión con el servidor.');
+      await showAlert('Error en la conexión con el servidor.');
     }
   };
 
   // Eliminar Producto
   const handleDeleteProduct = async (id) => {
-    if (!window.confirm('¿Estás seguro de que deseas eliminar este repuesto?')) return;
+    const ok = await showConfirm('¿Estás seguro de que deseas eliminar este repuesto?');
+    if (!ok) return;
     try {
       const res = await fetch(getApiUrl(`/api/products/${id}`), {
         method: 'DELETE',
@@ -182,13 +185,13 @@ const Inventory = () => {
       });
       const data = await res.json();
       if (res.ok) {
-        alert(data.message);
+        await showAlert(data.message);
         fetchInventoryData();
       } else {
-        alert(`Error: ${data.error}`);
+        await showAlert(`Error: ${data.error}`);
       }
     } catch (err) {
-      alert('Error al conectar con el servidor.');
+      await showAlert('Error al conectar con el servidor.');
     }
   };
 
@@ -205,22 +208,22 @@ const Inventory = () => {
       });
       const data = await res.json();
       if (res.ok) {
-        alert(data.message);
+        await showAlert(data.message);
         setCategoryModal(false);
         setCatName('');
         setCatDesc('');
         fetchInventoryData();
       } else {
-        alert(`Error: ${data.error}`);
+        await showAlert(`Error: ${data.error}`);
       }
     } catch (err) {
-      alert('Error al conectar con el servidor.');
+      await showAlert('Error al conectar con el servidor.');
     }
   };
 
   // Eliminar Categoría (Cascada)
   const handleDeleteCategory = async (id, name) => {
-    const doubleCheck = window.confirm(
+    const doubleCheck = await showConfirm(
       ` ¡ADVERTENCIA DE CASCADA! \n\n¿Estás seguro de eliminar la categoría "${name}"?\nEsta acción eliminará TODOS los repuestos pertenecientes a esta categoría de forma permanente.`
     );
     if (!doubleCheck) return;
@@ -232,13 +235,13 @@ const Inventory = () => {
       });
       const data = await res.json();
       if (res.ok) {
-        alert(data.message);
+        await showAlert(data.message);
         fetchInventoryData();
       } else {
-        alert(`Error: ${data.error}`);
+        await showAlert(`Error: ${data.error}`);
       }
     } catch (err) {
-      alert('Error al conectar con el servidor.');
+      await showAlert('Error al conectar con el servidor.');
     }
   };
 

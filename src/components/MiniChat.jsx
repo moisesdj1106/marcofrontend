@@ -113,7 +113,7 @@ export default function MiniChat({ initialOpen = true }) {
       });
       const data = await res.json();
       if (data.type === 'list') {
-        const listHtml = data.items.map(it => `• ${it.name} — ${formatBs(it.price)} — stock: ${it.stock}`).join('\n');
+        const listHtml = data.items.map(it => `• [${it.id}] ${it.name} — ${formatBs(it.price)} — stock: ${it.stock}`).join('\n');
         addMessage('bot', `${data.title}\n${listHtml}`);
         const outOfStock = (data.items || []).filter(it => (it.stock || 0) <= 0).map(it => it.name);
         if (outOfStock.length > 0) addMessage('bot', `⚠️ Los siguientes artículos están sin stock: ${outOfStock.join(', ')}`);

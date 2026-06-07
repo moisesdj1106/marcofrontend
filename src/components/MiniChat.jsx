@@ -16,6 +16,7 @@ export default function MiniChat({ initialOpen = true }) {
   const bottomRef = useRef(null);
   const inputRef = useRef(null);
   const { addToCart } = useCart();
+  const [closed, setClosed] = useState(false);
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -167,14 +168,20 @@ export default function MiniChat({ initialOpen = true }) {
     } catch (e) { return `${val} Bs`; }
   }
 
-  return (
-    <div className={`minichat ${open ? 'open' : ''}`}>
-      <div className="minichat-header">
+  if (closed) {
++    return (
++      <div className="minichat-launcher" onClick={() => { setClosed(false); setOpen(true); }} title="Abrir asistente">Asistente</div>
++    );
++  }
++
++  return (
++    <div className={`minichat ${open ? 'open' : ''}`}>
++      <div className="minichat-header">
         <div className="minichat-title" onClick={() => setOpen(!open)}>Asistente de la Tienda</div>
         <div style={{display:'flex', gap:8, alignItems:'center'}}>
           <button className="minichat-help-btn" title="Qué puedo hacer" onClick={() => setShowHelp(s => !s)}>?</button>
           <div className="minichat-toggle" onClick={() => setOpen(!open)}>{open ? '—' : '+'}</div>
-          <button className="minichat-close-btn" title="Cerrar" onClick={() => setOpen(false)}>×</button>
+          <button className="minichat-close-btn" title="Cerrar" onClick={() => setClosed(true)}>×</button>
         </div>
       </div>
 

@@ -146,6 +146,15 @@ export default function MiniChat({ initialOpen = true }) {
         }
         const itemsText = items.map(i=> `• ${i.name} x${i.quantity}`).join('\n');
         addMessage('bot', `🔒 ${data.message} — Reserva ID: ${data.reservationId} — Expira: ${data.expiresAt}\n${itemsText}\nHe agregado los artículos reservados a tu carrito.`);
+      } else if (data.type === 'invoice') {
+        // Manejo de solicitud de factura
+        const orderId = data.orderId;
+        if (data.invoiceId) {
+          addMessage('bot', `✅ Solicitud de factura registrada. Factura ID: INV-${data.invoiceId} para la orden ORD-${orderId}. El admin será notificado.`);
+        } else {
+          const sqlNotice = data.sql ? `\nSQL sugerido para crear la tabla invoices:\n${data.sql}` : '';
+          addMessage('bot', `✅ Solicitud registrada para la orden ORD-${orderId}. No hay tabla de facturas configurada en la base de datos.${sqlNotice}\nPor favor, notifica al administrador.`);
+        }
       } else if (data.type === 'admin_stats') {
         addMessage('bot', `📊 Hoy: ${formatBs(data.today.total)} (${data.today.orders} órdenes)\nAyer: ${formatBs(data.previous.total)} (${data.previous.orders} órdenes)\nMejora: ${data.improvement ?? 'N/D'}%`);
       } else if (data.type === 'my_orders') {

@@ -27,10 +27,10 @@
 .minichat-message.user{align-self:flex-end; text-align:right}
 .minichat-message.bot{align-self:flex-start}
 .minichat-message-content{background:#f7fafc; padding:10px 12px; border-radius:12px; line-height:1.35}
-.minichat-message.user .minichat-message-content{background:#06b6d4; color:white}
+.minichat-message.user .minichat-message-content{background:#0687b9ae; color:white}
 .minichat-input-row{display:flex; gap:8px; padding:12px; border-top:1px solid #f1f5f9}
 .minichat-input-row input{flex:1; padding:10px 12px; border-radius:10px; border:1px solid #e2e8f0}
-.minichat-input-row button{background:#0ea5a3; color:white; border:none; padding:10px 14px; border-radius:10px; cursor:pointer}
+.minichat-input-row button{background:#0a85abdf; color:white; border:none; padding:10px 14px; border-radius:10px; cursor:pointer}
 
 .minichat:not(.open){width:180px}
 .minichat:not(.open) .minichat-body{display:none}

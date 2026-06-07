@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import './MiniChat.css';
 import { getApiUrl } from '../utils/api';
 
-export default function MiniChat({ initialOpen = false }) {
+export default function MiniChat({ initialOpen = true }) {
   const [open, setOpen] = useState(initialOpen);
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState('');
@@ -12,6 +12,34 @@ export default function MiniChat({ initialOpen = false }) {
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages, open]);
+
+  useEffect(() => {
+    // Mensaje de bienvenida con instrucciones claras
+    addMessage('bot', 'Hola 👋 Soy el asistente de la tienda. Puedo: listar productos disponibles, buscar por nombre, consultar stock, y crear órdenes.\nEjemplos:\n• "Productos disponibles"\n• "Stock bujía ngk"\n• "Comprar 2 Bujía NGK, 1 Batería Yuasa"\nSi vas a crear una orden, simplemente escribe "Comprar" seguido de las cantidades y nombres. Yo me encargo de buscar los productos y completar la orden si estás autenticado.');
+  }, []);
+
+  function parseOrderMessage(text) {
+    const lower = text.toLowerCase();
+    if (!/(comprar|quiero comprar|hacer pedido|hacer una orden)/.test(lower)) return [];
+    const after = text.split(/comprar|quiero comprar|hacer pedido|hacer una orden/)[1] || '';
+    const parts = after.split(/,| y |;|\band\b/).map(p => p.trim()).filter(Boolean);
+    const items = [];
+    for (const part of parts) {
+      const m = part.match(/(\d+)\s+(.+)/); // '2 bujía ngk'
+      if (m) {
+        items.push({ name: m[2].trim(), quantity: parseInt(m[1], 10) });
+        continue;
+      }
+      const m2 = part.match(/(.+?)\s+x?(\d+)$/); // 'Bujía NGK x2'
+      if (m2) {
+        items.push({ name: m2[1].trim(), quantity: parseInt(m2[2], 10) });
+        continue;
+      }
+      // If only a name is present, default quantity 1
+      if (part.length > 2) items.push({ name: part.trim(), quantity: 1 });
+    }
+    return items;
+  }
 
   function addMessage(from, content) {
     setMessages((m) => [...m, { from, content, id: Date.now() + Math.random() }]);
@@ -26,13 +54,15 @@ export default function MiniChat({ initialOpen = false }) {
 
     try {
       const token = localStorage.getItem('token');
+      const parsedOrder = parseOrderMessage(text);
+      const bodyPayload = parsedOrder.length > 0 ? { message: text, orderItems: parsedOrder } : { message: text };
       const res = await fetch(getApiUrl('/api/chat'), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           ...(token ? { Authorization: `Bearer ${token}` } : {}),
         },
-        body: JSON.stringify({ message: text }),
+        body: JSON.stringify(bodyPayload),
       });
       const data = await res.json();
       if (data.type === 'list') {
@@ -44,12 +74,18 @@ export default function MiniChat({ initialOpen = false }) {
       } else if (data.type === 'stock') {
         addMessage('bot', `${data.product.name} — Stock: ${data.product.stock}`);
       } else if (data.type === 'order') {
-        addMessage('bot', `✅ ${data.message} — Orden ID: ${data.orderId} — Total: ${data.total}`);
+        const itemsText = (data.items || []).map(i=> `• ${i.name} x${i.quantity}`).join('\n');
+        addMessage('bot', `✅ ${data.message} — Orden ID: ${data.orderId} — Total: ${data.total}\n${itemsText}\nSi quieres, revisa tu historial de órdenes.`);
       } else if (data.type === 'admin_stats') {
         addMessage('bot', `📊 Hoy: $${data.today.total} (${data.today.orders} órdenes)\nAyer: $${data.previous.total} (${data.previous.orders} órdenes)\nMejora: ${data.improvement ?? 'N/D'}%`);
       } else if (data.type === 'text') {
         const content = data.content || JSON.stringify(data);
-        addMessage('bot', content);
+        // Si el backend devuelve SQL para crear company_info, mostrarlo en bloque
+        if (data.sql) {
+          addMessage('bot', content + '\nSQL sugerido:\n' + data.sql);
+        } else {
+          addMessage('bot', content);
+        }
       } else {
         addMessage('bot', JSON.stringify(data));
       }

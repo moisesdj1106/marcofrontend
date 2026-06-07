@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import './MiniChat.css';
 import { getApiUrl } from '../utils/api';
+import { useCart } from '../context/CartContext';
 
 export default function MiniChat({ initialOpen = true }) {
   const [open, setOpen] = useState(initialOpen);
@@ -8,6 +9,7 @@ export default function MiniChat({ initialOpen = true }) {
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
   const bottomRef = useRef(null);
+  const { addToCart } = useCart();
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -66,18 +68,35 @@ export default function MiniChat({ initialOpen = true }) {
       });
       const data = await res.json();
       if (data.type === 'list') {
-        const listHtml = data.items.map(it => `• ${it.name} — $${it.price} — stock: ${it.stock}`).join('\n');
+        const listHtml = data.items.map(it => `• ${it.name} — ${formatBs(it.price)} — stock: ${it.stock}`).join('\n');
         addMessage('bot', `${data.title}\n${listHtml}`);
       } else if (data.type === 'product') {
         const p = data.product;
-        addMessage('bot', `${p.name} — $${p.price}\nStock: ${p.stock}\n${p.description || ''}`);
+        addMessage('bot', `${p.name} — ${formatBs(p.price)}\nStock: ${p.stock}\n${p.description || ''}`);
       } else if (data.type === 'stock') {
         addMessage('bot', `${data.product.name} — Stock: ${data.product.stock}`);
       } else if (data.type === 'order') {
-        const itemsText = (data.items || []).map(i=> `• ${i.name} x${i.quantity}`).join('\n');
-        addMessage('bot', `✅ ${data.message} — Orden ID: ${data.orderId} — Total: ${data.total}\n${itemsText}\nSi quieres, revisa tu historial de órdenes.`);
+        // Añadir items al carrito local para continuar el flujo de compra
+        const items = data.items || [];
+        for (const it of items) {
+          // Construir objeto de producto esperable por addToCart
+          const productObj = {
+            id: it.product_id,
+            name: it.name,
+            price: it.unit_price,
+            stock: it.stock || 0,
+            image_url: it.image_url || ''
+          };
+          try {
+            addToCart(productObj, it.quantity);
+          } catch (e) {
+            // ignorar errores locales
+          }
+        }
+        const itemsText = items.map(i=> `• ${i.name} x${i.quantity}`).join('\n');
+        addMessage('bot', `✅ ${data.message} — Orden ID: ${data.orderId} — Total: ${formatBs(data.total)}\n${itemsText}\nHe agregado estos artículos a tu carrito para que continúes con el flujo de compra.`);
       } else if (data.type === 'admin_stats') {
-        addMessage('bot', `📊 Hoy: $${data.today.total} (${data.today.orders} órdenes)\nAyer: $${data.previous.total} (${data.previous.orders} órdenes)\nMejora: ${data.improvement ?? 'N/D'}%`);
+        addMessage('bot', `📊 Hoy: ${formatBs(data.today.total)} (${data.today.orders} órdenes)\nAyer: ${formatBs(data.previous.total)} (${data.previous.orders} órdenes)\nMejora: ${data.improvement ?? 'N/D'}%`);
       } else if (data.type === 'text') {
         const content = data.content || JSON.stringify(data);
         // Si el backend devuelve SQL para crear company_info, mostrarlo en bloque
@@ -94,6 +113,13 @@ export default function MiniChat({ initialOpen = true }) {
     } finally {
       setLoading(false);
     }
+  }
+
+  function formatBs(val) {
+    try {
+      const n = Number(val) || 0;
+      return n.toLocaleString('es-VE') + ' Bs';
+    } catch (e) { return `${val} Bs`; }
   }
 
   return (

@@ -35,3 +35,23 @@
 
 .minichat:not(.open){width:180px}
 .minichat:not(.open) .minichat-body{display:none}
+
+/* Animaciones */
+.minichat {
+  transition: transform 240ms cubic-bezier(.2,.8,.2,1), opacity 240ms ease;
+}
+.minichat.open {
+  transform: translateY(0);
+  opacity: 1;
+}
+.minichat:not(.open) {
+  transform: translateY(8px);
+  opacity: 0.95;
+}
+.minichat-message-content {
+  animation: fadeInUp 220ms ease;
+}
+@keyframes fadeInUp {
+  from { transform: translateY(6px); opacity: 0 }
+  to { transform: translateY(0); opacity: 1 }
+}

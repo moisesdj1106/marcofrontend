@@ -5,7 +5,12 @@ import { useCart } from '../context/CartContext';
 
 export default function MiniChat({ initialOpen = true }) {
   const [open, setOpen] = useState(initialOpen);
-  const [messages, setMessages] = useState([]);
+  const [messages, setMessages] = useState(() => {
+    try {
+      const saved = localStorage.getItem('miniChatMessages');
+      return saved ? JSON.parse(saved) : [];
+    } catch (e) { return []; }
+  });
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
   const bottomRef = useRef(null);
@@ -15,9 +20,17 @@ export default function MiniChat({ initialOpen = true }) {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages, open]);
 
+  // Persistir mensajes en localStorage
+  useEffect(() => {
+    try { localStorage.setItem('miniChatMessages', JSON.stringify(messages)); } catch (e) {}
+  }, [messages]);
+
   useEffect(() => {
     // Mensaje de bienvenida con instrucciones claras
-    addMessage('bot', 'Hola 👋 Soy el asistente de la tienda. Puedo: listar productos disponibles, buscar por nombre, consultar stock, y crear órdenes.\nEjemplos:\n• "Productos disponibles"\n• "Stock bujía ngk"\n• "Comprar 2 Bujía NGK, 1 Batería Yuasa"\nSi vas a crear una orden, simplemente escribe "Comprar" seguido de las cantidades y nombres. Yo me encargo de buscar los productos y completar la orden si estás autenticado.');
+    // Añadir mensaje de bienvenida sólo si no hay historial previo
+    if (!messages || messages.length === 0) {
+      addMessage('bot', 'Hola 👋 Soy el asistente de la tienda. Puedo: listar productos disponibles, buscar por nombre, consultar stock, y crear órdenes.\nEjemplos:\n• "Productos disponibles"\n• "Stock bujía ngk"\n• "Comprar 2 Bujía NGK, 1 Batería Yuasa"\nSi vas a crear una orden, simplemente escribe "Comprar" seguido de las cantidades y nombres. Yo me encargo de buscar los productos y completar la orden si estás autenticado.');
+    }
   }, []);
 
   function parseOrderMessage(text) {
@@ -95,6 +108,23 @@ export default function MiniChat({ initialOpen = true }) {
         }
         const itemsText = items.map(i=> `• ${i.name} x${i.quantity}`).join('\n');
         addMessage('bot', `✅ ${data.message} — Orden ID: ${data.orderId} — Total: ${formatBs(data.total)}\n${itemsText}\nHe agregado estos artículos a tu carrito para que continúes con el flujo de compra.`);
+      } else if (data.type === 'draft') {
+        // draft guardado: agregar al carrito para revisión
+        const items = data.items || [];
+        for (const it of items) {
+          const productObj = { id: it.product_id, name: it.name, price: it.unit_price, stock: it.stock || 0, image_url: it.image_url || '' };
+          try { addToCart(productObj, it.quantity); } catch (e) {}
+        }
+        const itemsText = items.map(i=> `• ${i.name} x${i.quantity}`).join('\n');
+        addMessage('bot', `📝 ${data.message} — Borrador ID: ${data.orderId} — Total: ${formatBs(data.total)}\n${itemsText}\nHe agregado estos artículos a tu carrito para que los revises.`);
+      } else if (data.type === 'reservation') {
+        const items = data.items || [];
+        for (const it of items) {
+          const productObj = { id: it.product_id, name: it.name, price: it.unit_price, stock: it.stock || 0, image_url: it.image_url || '' };
+          try { addToCart(productObj, it.quantity); } catch (e) {}
+        }
+        const itemsText = items.map(i=> `• ${i.name} x${i.quantity}`).join('\n');
+        addMessage('bot', `🔒 ${data.message} — Reserva ID: ${data.reservationId} — Expira: ${data.expiresAt}\n${itemsText}\nHe agregado los artículos reservados a tu carrito.`);
       } else if (data.type === 'admin_stats') {
         addMessage('bot', `📊 Hoy: ${formatBs(data.today.total)} (${data.today.orders} órdenes)\nAyer: ${formatBs(data.previous.total)} (${data.previous.orders} órdenes)\nMejora: ${data.improvement ?? 'N/D'}%`);
       } else if (data.type === 'text') {

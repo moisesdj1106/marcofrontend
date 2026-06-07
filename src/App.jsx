@@ -9,6 +9,7 @@ import { CartProvider } from './context/CartContext';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import ProtectedRoute from './components/ProtectedRoute';
+import MiniChat from './components/MiniChat';
 
 // Vistas del Cliente
 import Home from './views/client/Home';
@@ -104,6 +105,7 @@ function App() {
             </main>
 
             <Footer />
+            <MiniChat />
           </div>
         </Router>
       </CartProvider>

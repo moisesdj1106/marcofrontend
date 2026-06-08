@@ -241,6 +241,49 @@ h1, h2, h3, h4, h5, h6, .brand-title {
   animation: fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
+.dashboard-bar-chart {
+  display: flex;
+  align-items: flex-end;
+  gap: 10px;
+  height: 100%;
+  padding: 0 8px;
+}
+
+.dashboard-bar-item {
+  flex: 0 0 48px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 48px;
+}
+
+.dashboard-bar-wrapper {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: flex-end;
+}
+
+.dashboard-bar-value {
+  margin-bottom: 8px;
+  font-size: 0.7rem;
+  color: var(--text-primary);
+  font-weight: 600;
+  text-align: center;
+}
+
+.dashboard-bar-label {
+  margin-top: 8px;
+  font-size: 0.7rem;
+  color: var(--text-secondary);
+  text-align: center;
+  width: 100%;
+  white-space: normal;
+  word-break: break-word;
+  overflow-wrap: anywhere;
+  line-height: 1.2;
+}
+
 /* Tarjetas de Repuestos con Elevación y Sombra 3D */
 .product-card {
   background: var(--bg-secondary);

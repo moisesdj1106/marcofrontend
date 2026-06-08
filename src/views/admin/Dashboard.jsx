@@ -161,17 +161,17 @@ const Dashboard = () => {
               <div>
                 {/* Contenedor del gráfico: barras verticales con ancho fijo y scroll horizontal si es necesario */}
                 <div className="pt-4 px-2 mb-4" style={{ height: '260px', borderBottom: '1px solid rgba(255,255,255,0.08)', paddingBottom: '12px', overflowX: 'auto' }}>
-                  <div style={{ display: 'flex', alignItems: 'flex-end', gap: '10px', height: '100%', padding: '0 8px' }}>
+                  <div className="dashboard-bar-chart">
                       {activePeriodData.map((item, idx) => {
                       const heightPercent = (item.total_sales / maxSalesValue) * 100;
                       const barHeight = Math.max(heightPercent, 3);
                       return (
-                          <div key={idx} style={{ width: 36, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                              <div title={`${formatCOP(item.total_sales)} (${item.total_orders} ped.)`} style={{ marginBottom: 8, fontSize: '0.7rem', color: 'var(--text-primary)', fontWeight: 600 }}>{formatCOP(item.total_sales)}</div>
-                          <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'flex-end' }}>
+                          <div key={idx} className="dashboard-bar-item">
+                              <div title={`${formatCOP(item.total_sales)} (${item.total_orders} ped.)`} className="dashboard-bar-value">{formatCOP(item.total_sales)}</div>
+                          <div className="dashboard-bar-wrapper">
                             <div style={{ width: '100%', height: `${barHeight}%`, minHeight: '8px', background: 'linear-gradient(180deg, #ff9500 0%, #ff3b30 100%)', boxShadow: '0 6px 18px rgba(255,90,50,0.18)', transition: 'height 0.5s' }} />
                           </div>
-                            <div style={{ marginTop: 8, fontSize: '0.7rem', color: 'var(--text-secondary)', textAlign: 'center', maxWidth: 60, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{item.period}</div>
+                            <div className="dashboard-bar-label">{item.period}</div>
                         </div>
                       );
                     })}

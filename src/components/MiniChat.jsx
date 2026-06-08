@@ -33,7 +33,7 @@ export default function MiniChat({ initialOpen = true }) {
     // Mensaje de bienvenida con instrucciones claras
     // Añadir mensaje de bienvenida sólo si no hay historial previo
     if (!messages || messages.length === 0) {
-      addMessage('bot', 'Hola 👋 Soy el asistente virtual de la tienda. Puedo listar productos, buscar por nombre, consultar stock, crear órdenes, reservar y más.\nIMPORTANTE: Cuando solicites "stock", indícame el nombre del repuesto o su ID (por ejemplo: "Stock bujía ngk" o "Stock 2").\nSi pides "Productos disponibles" te mostraré ID, nombre, precio y stock.\nSi eres administrador, también puedes preguntar por ventas e ingresos.\nPulsa "?" arriba para ver más ejemplos y formatos.');
+      addMessage('bot', 'Hola 👋 Soy el asistente virtual de la tienda MAX. Puedo listar productos, buscar por nombre, consultar stock, crear órdenes, reservar y más.\nIMPORTANTE: Cuando solicites "stock", indícame el nombre del repuesto o su ID (por ejemplo: "Stock bujía ngk" o "Stock 2").\nSi pides "Productos disponibles" te mostraré ID, nombre, precio y stock.\nSi eres administrador, también puedes preguntar por ventas e ingresos.\nPulsa "?" arriba para ver más ejemplos y formatos.');
     }
   }, []);
 
@@ -231,7 +231,7 @@ export default function MiniChat({ initialOpen = true }) {
   return (
     <div className={`minichat ${open ? 'open' : ''}`}>
       <div className="minichat-header">
-        <div className="minichat-title" onClick={() => setOpen(!open)}>AGENTE VIRTUAL</div>
+        <div className="minichat-title" onClick={() => setOpen(!open)}>MAX ASISTENTE VIRTUAL</div>
         <div style={{display:'flex', gap:8, alignItems:'center'}}>
             <button className="minichat-help-btn" title="Qué puedo hacer" onClick={() => setShowHelp(s => !s)}>?</button>
             <button className="minichat-clear-btn" title="Borrar conversación" onClick={clearConversation}>🗑</button>

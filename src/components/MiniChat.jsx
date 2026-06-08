@@ -268,6 +268,9 @@ export default function MiniChat({ initialOpen = true }) {
           <div className="minichat-messages">
             {messages.map(msg => (
               <div key={msg.id} className={`minichat-message ${msg.from}`}>
+                <div className="minichat-avatar" aria-hidden>
+                  {msg.from === 'bot' ? '🤖' : '👤'}
+                </div>
                 <div className="minichat-message-content">{msg.content.split('\n').map((l,i)=> <div key={i}>{l}</div>)}</div>
               </div>
             ))}

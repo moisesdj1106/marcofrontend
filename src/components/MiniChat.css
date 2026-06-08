@@ -24,9 +24,11 @@
 .minichat-title{font-weight:700; font-size:16px}
 .minichat-body{background:white; max-height:520px; display:flex; flex-direction:column}
 .minichat-messages{padding:16px; overflow:auto; flex:1; max-height:420px}
-.minichat-message{margin-bottom:12px; max-width:80%}
-.minichat-message.user{align-self:flex-end; text-align:right}
-.minichat-message.bot{align-self:flex-start}
+.minichat-message{margin-bottom:12px; max-width:80%; display:flex; gap:8px; align-items:flex-end}
+.minichat-message.user{align-self:flex-end; text-align:right; flex-direction:row-reverse}
+.minichat-message.bot{align-self:flex-start; flex-direction:row}
+.minichat-avatar{width:34px; height:34px; border-radius:50%; display:inline-flex; align-items:center; justify-content:center; font-size:16px; background:#e6eef2; color:#044; flex-shrink:0}
+.minichat-message.user .minichat-avatar{background:#0a85ab; color:#fff}
 .minichat-message-content{background:#f7fafc; padding:10px 12px; border-radius:12px; line-height:1.35}
 .minichat-message.user .minichat-message-content{background:#0687b9ae; color:white}
 .minichat-input-row{display:flex; gap:8px; padding:12px; border-top:1px solid #f1f5f9}
